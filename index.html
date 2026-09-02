@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LOTERIA DON CLEMENTE - HOST PANEL</title>
+<style>
+*{box-sizing:border-box} body{margin:0;font-family:Arial, sans-serif;background:#0f0f0f;color:white;text-align:center}
+.top-bar{background:#000;display:flex;justify-content:space-between;align-items:center;padding:10px 15px;border-bottom:3px solid gold}
+.live{background:red;padding:5px 12px;border-radius:5px;font-weight:bold}
+.fichas-oro{display:flex;gap:6px;justify-content:center;padding:12px;flex-wrap:wrap;background:white}
+.ficha-oro{width:52px;height:52px;border-radius:50%;background:radial-gradient(#e6c86a,#a67c00);border:3px solid #fff;color:#5a3d00;font-weight:900;font-size:22px;cursor:pointer;box-shadow:0 2px 5px rgba(0,0,0,.5)}
+.ficha-oro.vendida{background:radial-gradient(#4eff88,#00a03a)!important;color:white;border-color:#00ff5e}
+.ficha-oro.ganadora{background:red!important;color:white;animation:blink 0.5s infinite}
+@keyframes blink{0%,100%{transform:scale(1)}50%{transform:scale(1.2)}}
+.main{display:grid;grid-template-columns:420px 1fr;gap:15px;padding:15px;background:white;color:black}
+@media(max-width:800px){.main{grid-template-columns:1fr}}
+.carta-panel{background:#fffdf0;border:4px solid gold;border-radius:15px;padding:15px;position:relative}
+.costo{position:absolute;top:10px;left:10px;background:gold;padding:5px 10px;border-radius:10px;font-weight:900;color:black}
+.carta-img{width:260px;height:380px;margin:20px auto;border:3px solid gold;border-radius:10px;object-fit:cover;background:white}
+#nombreCarta{font-size:32px;font-weight:900;margin:10px 0;text-transform:uppercase}
+.btn-gritar{font-size:28px;padding:18px 35px;background:linear-gradient(gold,#ff9800);border:none;border-radius:30px;font-weight:900;cursor:pointer;box-shadow:0 4px 10px rgba(0,0,0,.3)}
+.btn-nuevo{margin-top:10px;padding:10px 20px;background:#333;color:white;border-radius:20px;border:none;cursor:pointer}
+.premios-box{background:#f5f5f5;border-radius:15px;padding:15px;color:black}
+.linea-premio{display:flex;justify-content:space-between;align-items:center;margin:8px 0;background:white;border-radius:20px;padding:5px 15px;box-shadow:0 2px 5px rgba(0,0,0,.1)}
+.linea-premio.label{background:red;color:white;padding:6px 18px;border-radius:20px;font-weight:bold}
+.linea-premio.valor{font-size:24px;font-weight:900;color:#8B4513}
+.cartones-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:15px}
+.carton{background:white;border:2px solid #ddd;border-radius:8px;padding:5px;font-size:9px}
+.carton-titulo{font-weight:900;font-size:10px;margin-bottom:3px}
+.carton-mini{display:grid;grid-template-columns:repeat(4,1fr);gap:2px}
+.mini-celda{border:1px solid #ccc;height:22px;display:flex;align-items:center;justify-content:center;font-size:8px;background:#fafafa}
+.mini-celda.tapat{background:rgba(255,0,0,0.85)!important;color:white;font-weight:bold}
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <div><span class="live">● LIVE</span> LOTERÍA DON CLEMENTE • HOST PANEL</div>
+  <div id="cantandoLabel" style="color:gold">EL GALLO 🔊 AUDIO</div>
+  <div>👁 2.4K viewers</div>
+</div>
+
+<div class="fichas-oro" id="contenedorFichas"></div>
+
+<div class="main">
+  <div class="carta-panel">
+    <div class="costo">COSTO:<br>$20</div>
+    <img id="imgCarta" class="carta-img" src="https://i.imgur.com/RkGLb3a.png" alt="Carta">
+    <div id="nombreCarta">EL GALLO</div>
+    <div><button class="btn-gritar" onclick="gritarCarta()">🔊 GRITAR CARTA</button></div>
+    <div><button class="btn-nuevo" onclick="nuevoJuego()">🔄 NUEVO JUEGO - 20 CARTONES NUEVOS</button></div>
+    <div style="margin-top:10px">Cartas gritadas: <span id="contadorGritadas">0</span>/54</div>
+  </div>
+
+  <div>
+    <div class="premios-box">
+      <h3 style="margin:0">🏆 PREMIOS DEL JUEGO</h3>
+      <div class="linea-premio"><span class="label">1ra Línea</span><span class="valor">100</span></div>
+      <div class="linea-premio"><span class="label">2da Línea</span><span class="valor">100</span></div>
+      <div class="linea-premio"><span class="label">3ra Línea</span><span class="valor">100</span></div>
+      <div class="linea-premio"><span class="label">Acumulado</span><span class="valor">80</span></div>
+      <small>DIAGONAL: Fichas 1,6,15,20 | HORIZONTAL: 2,3,4,5,16,17,18,19 | VERTICAL: 7,8,9,10,11,12,13,14 - Gana con 4 en línea</small>
+    </div>
+    <div class="cartones-grid" id="gridCartones"></div>
+  </div>
+</div>
+
+<script>
+// 54 CARTAS DON CLEMENTE - CON IMAGENES
+const LOTERIA_54 = [
+{id:1,n:"EL GALLO",img:"https://loteria.loteria-mexicana.mx/images/cartas/1.jpg"},
+{id:2,n:"EL DIABLITO",img:"https://loteria.loteria-mexicana.mx/images/cartas/2.jpg"},
+{id:3,n:"LA DAMA",img:"https://loteria.loteria-mexicana.mx/images/cartas/3.jpg"},
+{id:4,n:"EL CATRIN",img:"https://loteria.loteria-mexicana.mx/images/cartas/4.jpg"},
+{id:5,n:"EL PARAGUAS",img:"https://loteria.loteria-mexicana.mx/images/cartas/5.jpg"},
+{id:6,n:"LA SIRENA",img:"https://loteria.loteria-mexicana.mx/images/cartas/6.jpg"},
+{id:7,n:"LA ESCALERA",img:"https://loteria.loteria-mexicana.mx/images/cartas/7.jpg"},
+{id:8,n:"LA BOTELLA",img:"https://loteria.loteria-mexicana.mx/images/cartas/8.jpg"},
+{id:9,n:"EL BARRIL",img:"https://loteria.loteria-mexicana.mx/images/cartas/9.jpg"},
+{id:10,n:"EL ARBOL",img:"https://loteria.loteria-mexicana.mx/images/cartas/10.jpg"},
+{id:11,n:"EL MELON",img:"https://loteria.loteria-mexicana.mx/images/cartas/11.jpg"},
+{id:12,n:"EL VALIENTE",img:"https://loteria.loteria-mexicana.mx/images/cartas/12.jpg"},
+{id:13,n:"EL GORRITO",img:"https://loteria.loteria-mexicana.mx/images/cartas/13.jpg"},
+{id:14,n:"LA MUERTE",img:"https://loteria.loteria-mexicana.mx/images/cartas/14.jpg"},
+{id:15,n:"LA PERA",img:"https://loteria.loteria-mexicana.mx/images/cartas/15.jpg"},
+{id:16,n:"LA BANDERA",img:"https://loteria.loteria-mexicana.mx/images/cartas/16.jpg"},
+{id:17,n:"EL BANDOLON",img:"https://loteria.loteria-mexicana.mx/images/cartas/17.jpg"},
+{id:18,n:"EL VIOLONCELLO",img:"https://loteria.loteria-mexicana.mx/images/cartas/18.jpg"},
+{id:19,n:"LA GARZA",img:"https://loteria.loteria-mexicana.mx/images/cartas/19.jpg"},
+{id:20,n:"EL PAJARO",img:"https://loteria.loteria-mexicana.mx/images/cartas/20.jpg"},
+{id:21,n:"LA MANO",img:"https://loteria.loteria-mexicana.mx/images/cartas/21.jpg"},
+{id:22,n:"LA BOTA",img:"https://loteria.loteria-mexicana.mx/images/cartas/22.jpg"},
+{id:23,n:"LA LUNA",img:"https://loteria.loteria-mexicana.mx/images/cartas/23.jpg"},
+{id:24,n:"EL COTORRO",img:"https://loteria.loteria-mexicana.mx/images/cartas/24.jpg"},
+{id:25,n:"EL BORRACHO",img:"https://loteria.loteria-mexicana.mx/images/cartas/25.jpg"},
+{id:26,n:"EL NEGRITO",img:"https://loteria.loteria-mexicana.mx/images/cartas/26.jpg"},
+{id:27,n:"EL CORAZON",img:"https://loteria.loteria-mexicana.mx/images/cartas/27.jpg"},
+{id:28,n:"LA SANDIA",img:"https://loteria.loteria-mexicana.mx/images/cartas/28.jpg"},
+{id:29,n:"EL TAMBOR",img:"https://loteria.loteria-mexicana.mx/images/cartas/29.jpg"},
+{id:30,n:"EL CAMARON",img:"https://loteria.loteria-mexicana.mx/images/cartas/30.jpg"},
+{id:31,n:"LAS JARAS",img:"https://loteria.loteria-mexicana.mx/images/cartas/31.jpg"},
+{id:32,n:"EL MUSICO",img:"https://loteria.loteria-mexicana.mx/images/cartas/32.jpg"},
+{id:33,n:"LA ARAÑA",img:"https://loteria.loteria-mexicana.mx/images/cartas/33.jpg"},
+{id:34,n:"EL SOLDADO",img:"https://loteria.loteria-mexicana.mx/images/cartas/34.jpg"},
+{id:35,n:"LA ESTRELLA",img:"https://loteria.loteria-mexicana.mx/images/cartas/35.jpg"},
+{id:36,n:"EL CAZO",img:"https://loteria.loteria-mexicana.mx/images/cartas/36.jpg"},
+{id:37,n:"EL MUNDO",img:"https://loteria.loteria-mexicana.mx/images/cartas/37.jpg"},
+{id:38,n:"EL APACHE",img:"https://loteria.loteria-mexicana.mx/images/cartas/38.jpg"},
+{id:39,n:"EL NOPAL",img:"https://loteria.loteria-mexicana.mx/images/cartas/39.jpg"},
+{id:40,n:"EL ALACRAN",img:"https://loteria.loteria-mexicana.mx/images/cartas/40.jpg"},
+{id:41,n:"LA ROSA",img:"https://loteria.loteria-mexicana.mx/images/cartas/41.jpg"},
+{id:42,n:"LA CALAVERA",img:"https://loteria.loteria-mexicana.mx/images/cartas/42.jpg"},
+{id:43,n:"LA CAMPANA",img:"https://loteria.loteria-mexicana.mx/images/cartas/43.jpg"},
+{id:44,n:"EL CANTARITO",img:"https://loteria.loteria-mexicana.mx/images/cartas/44.jpg"},
+{id:45,n:"EL VENADO",img:"https://loteria.loteria-mexicana.mx/images/cartas/45.jpg"},
+{id:46,n:"EL SOL",img:"https://loteria.loteria-mexicana.mx/images/cartas/46.jpg"},
+{id:47,n:"LA CORONA",img:"https://loteria.loteria-mexicana.mx/images/cartas/47.jpg"},
+{id:48,n:"LA CHALUPA",img:"https://loteria.loteria-mexicana.mx/images/cartas/48.jpg"},
+{id:49,n:"EL PINO",img:"https://loteria.loteria-mexicana.mx/images/cartas/49.jpg"},
+{id:50,n:"EL PESCADO",img:"https://loteria.loteria-mexicana.mx/images/cartas/50.jpg"},
+{id:51,n:"LA PALMA",img:"https://loteria.loteria-mexicana.mx/images/cartas/51.jpg"},
+{id:52,n:"LA MACETA",img:"https://loteria.loteria-mexicana.mx/images/cartas/52.jpg"},
+{id:53,n:"EL ARPA",img:"https://loteria.loteria-mexicana.mx/images/cartas/53.jpg"},
+{id:54,n:"LA RANA",img:"https://loteria.loteria-mexicana.mx/images/cartas/54.jpg"}
+];
+
+let cartones={}, vendidas=new Set(), gritadas=[];
+const tipoLinea={1:"DIAGONAL",6:"DIAGONAL",15:"DIAGONAL",20:"DIAGONAL",2:"HORIZONTAL",3:"HORIZONTAL",4:"HORIZONTAL",5:"HORIZONTAL",16:"HORIZONTAL",17:"HORIZONTAL",18:"HORIZONTAL",19:"HORIZONTAL",7:"VERTICAL",8:"VERTICAL",9:"VERTICAL",10:"VERTICAL",11:"VERTICAL",12:"VERTICAL",13:"VERTICAL",14:"VERTICAL"};
+
+function nuevoJuego(){
+  cartones={}; vendidas.clear(); gritadas=[];
+  for(let i=1;i<=20;i++){
+    let m=[...LOTERIA_54].sort(()=>0.5-Math.random());
+    cartones[i]=m.slice(0,16);
+  }
+  renderFichas(); renderCartones();
+  document.getElementById("contadorGritadas").innerText="0";
+}
+
+function renderFichas(){
+  let html=""; for(let i=1;i<=20;i++) html+=`<button class="ficha-oro" id="f${i}" onclick="toggleFicha(${i})">${i}</button>`;
+  document.getElementById("contenedorFichas").innerHTML=html;
+}
+
+function renderCartones(){
+  let html=""; for(let i=1;i<=20;i++){
+    html+=`<div class="carton"><div class="carton-titulo">F${i} ${tipoLinea[i].substring(0,4)}</div><div class="carton-mini">`;
+    cartones[i].forEach((c,idx)=>{ html+=`<div class="mini-celda" id="cell_${i}_${idx}" title="${c.n}">${c.id}</div>`; });
+    html+=`</div></div>`;
+  }
+  document.getElementById("gridCartones").innerHTML=html;
+}
+
+function toggleFicha(n){
+  let el=document.getElementById(`f${n}`); el.classList.toggle("vendida");
+  if(vendidas.has(n)) vendidas.delete(n); else vendidas.add(n);
+}
+
+function gritarCarta(){
+  let disponibles=LOTERIA_54.filter(c=>!gritadas.find(g=>g.id===c.id));
+  if(disponibles.length===0){ alert("¡Se acabó la baraja!"); return; }
+  let carta=disponibles[Math.floor(Math.random()*disponibles.length)];
+  gritadas.push(carta);
+
+  // Mostrar
+  document.getElementById("imgCarta").src=carta.img;
+  document.getElementById("nombreCarta").innerText=carta.n;
+  document.getElementById("cantandoLabel").innerText=carta.n+" 🔊";
+  document.getElementById("contadorGritadas").innerText=gritadas.length;
+
+  // Audio que canta
+  let utter=new SpeechSynthesisUtterance(carta.n);
+  utter.lang="es-MX"; utter.rate=0.85; utter.pitch=1.1;
+  speechSynthesis.speak(utter);
+
+  // Tapar automático SOLO en vendidas
+  vendidas.forEach(fichaNum=>{
+    cartones[fichaNum].forEach((c,idx)=>{
+      if(c.id===carta.id){
+        let cell=document.getElementById(`cell_${fichaNum}_${idx}`);
+        if(cell) cell.classList.add("tapat");
+      }
+    });
+  });
+
+  setTimeout(verificarGanadores,300);
+}
+
+function verificarGanadores(){
+  vendidas.forEach(num=>{
+    let carton=cartones[num]; let tipo=tipoLinea[num]; let gano=false;
+    let idsGritados=gritadas.map(g=>g.id);
+
+    if(tipo==="DIAGONAL"){
+      let d1=[carton[0].id,carton[5].id,carton[10].id,carton[15].id].every(id=>idsGritados.includes(id));
+      let d2=[carton[3].id,carton[6].id,carton[9].id,carton[12].id].every(id=>idsGritados.includes(id));
+      if(d1||d2) gano=true;
+    }
+    if(tipo==="HORIZONTAL"){
+      for(let f=0;f<4;f++){
+        let fila=[carton[f*4].id,carton[f*4+1].id,carton[f*4+2].id,carton[f*4+3].id];
+        if(fila.every(id=>idsGritados.includes(id))) gano=true;
+      }
+    }
+    if(tipo==="VERTICAL"){
+      for(let c=0;c<4;c++){
+        let col=[carton[c].id,carton[c+4].id,carton[c+8].id,carton[c+12].id];
+        if(col.every(id=>idsGritados.includes(id))) gano=true;
+      }
+    }
+    if(gano){
+      let el=document.getElementById(`f${num}`);
+      if(!el.classList.contains("ganadora")){
+        el.classList.add("ganadora");
+        // Audio ganador
+        let win=new SpeechSynthesisUtterance(`¡Lotería! ¡
