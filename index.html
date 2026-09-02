@@ -199,7 +199,7 @@ function preparar(){
  configurarImagen(document.getElementById("cartaActual"),1);
  document.getElementById("nombreActual").textContent="LISTO";
  document.getElementById("cantando").textContent="—";
- document.getElementById("estado").textContent="54 cartas disponibles en la baraja.";
+ document.getElementById("estado").textContent="54 cartas disponibles en la baraja. Tablero: 32 cartas."; const contador=document.getElementById("contadorBaraja"); if(contador) contador.textContent="54 / 54";
 }
 
 function gritarCarta(){
@@ -216,8 +216,11 @@ function gritarCarta(){
  document.getElementById("cartaActual").alt=NOMBRES[n-1];
  document.getElementById("nombreActual").textContent=NOMBRES[n-1];
  document.getElementById("cantando").textContent=NOMBRES[n-1];
- const mini=document.getElementById("mini"+n);\n if(mini) mini.classList.add("salio");
+ const mini=document.getElementById("mini"+n);
+ if(mini) mini.classList.add("salio");
  document.getElementById("estado").textContent=`Carta ${n} • ${NOMBRES[n-1]} • ${disponibles.length} restantes`;
+ const contador=document.getElementById("contadorBaraja");
+ if(contador) contador.textContent=`${disponibles.length} / 54`;
 
  comprobarGanadores();
 
@@ -324,11 +327,16 @@ function nuevoJuego(){
  preparar();
 }
 
-window.addEventListener("DOMContentLoaded",()=>{
+function iniciarJuego(){
  crearClientes();
  crearBaraja();
  nuevoJuego();
-});
+}
+if(document.readyState==="loading"){
+ window.addEventListener("DOMContentLoaded",iniciarJuego);
+}else{
+ iniciarJuego();
+}
 </script>
 </body>
 </html>
