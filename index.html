@@ -32,9 +32,13 @@ body{
  font-size:clamp(20px,3vw,34px)
 }
 
+/* ===== CONTENEDOR PEGADO A LA IZQUIERDA ===== */
+
 .contenedor{
  max-width:1500px;
- margin:auto;
+ width:1500px;
+ margin-left:0;
+ margin-right:auto;
  padding:10px;
  transform:translateY(-12px)
 }
@@ -129,6 +133,8 @@ body{
 
  align-items:stretch;
 }
+
+/* ===== LATERALES ===== */
 
 .lateral{
  position:relative;
@@ -463,6 +469,10 @@ body{
 @media(max-width:900px){
 
  .contenedor{
+  width:100%;
+  max-width:none;
+  margin-left:0;
+  margin-right:0;
   transform:translateY(-6px);
  }
 
@@ -543,7 +553,7 @@ body{
  }
 }
 
-/* ===== AJUSTE PARA 90% ===== */
+/* ===== AJUSTE PARA ESCRITORIO ===== */
 
 @media(min-width:901px){
 
@@ -946,6 +956,7 @@ function toggleCliente(n){
  if(!el)return;
 
  /* No permitir ocultar una ficha que ya ganó */
+
  if(el.classList.contains("ganador"))
   return;
 
@@ -973,23 +984,18 @@ function marcarGanador(cliente,numeroPremio){
 
  if(!ficha)return;
 
- /* Quitamos cualquier estado anterior */
  ficha.classList.remove("oculto");
 
- /* Marcamos como ganador */
  ficha.classList.add("ganador");
 
- /* Mostramos el número del premio */
  ficha.textContent=numeroPremio;
 
- /* Actualizamos información */
  ficha.dataset.cliente=cliente;
 
  ficha.title=
   "Cliente "+cliente+
   " • Ganó el premio "+numeroPremio;
 
- /* Evitamos que se pueda ocultar */
  ficha.onclick=null;
 }
 
@@ -1187,8 +1193,6 @@ function comprobarGanadores(){
 
    premiosObtenidos++;
 
-   /* ===== MARCAR GANADOR ===== */
-
    marcarGanador(
     cliente,
     premiosObtenidos
@@ -1198,8 +1202,6 @@ function comprobarGanadores(){
     cliente,
     premiosObtenidos
    );
-
-   /* ===== TERCER PREMIO ===== */
 
    if(premiosObtenidos>=MAX_PREMIOS){
 
@@ -1349,8 +1351,6 @@ function nuevoJuego(){
    document.getElementById("cliente"+n);
 
   if(e){
-
-   /* Regresar ficha a su estado normal */
 
    e.classList.remove("oculto");
 
