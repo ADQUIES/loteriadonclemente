@@ -3,27 +3,25 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Loteria Don Clemente COMPACTA</title>
+<title>Loteria Don Clemente ULTRA</title>
 <style>
-*{box-sizing:border-box;font-family:Arial;margin:0;padding:0}
-body{background:#f5f2ea;overflow:hidden;height:100dvh;width:100vw}
-.topbar{background:#0a2a4a;color:#fff;text-align:center;padding:2px;font-size:11px;border-bottom:2px solid #ffee00;height:18px;line-height:14px}
-.encabezado{display:flex;justify-content:space-between;font-weight:900;padding:1px 6px;font-size:11px;height:14px}
-.tablero{display:grid;grid-template-columns:32px 1fr 140px 1fr 32px;gap:2px;padding:2px;height:calc(100dvh - 32px)}
-.baraja{border:2px solid #c99b35;background:#fff;display:grid;grid-template-columns:repeat(4,1fr);gap:1px;padding:1px;border-radius:4px}
-.carta{aspect-ratio:.72;background:#ddd;position:relative;overflow:hidden;border-radius:2px;font-size:0}
-.carta img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.carta.salio::after{content:'';position:absolute;inset:0;background:url(CARTAS/TAPA1.jpg) center/cover}
-.cliente{width:26px;height:26px;border-radius:50%;background:#c99b35;color:#fff;border:2px solid #fff;font-weight:900;font-size:12px;display:flex;align-items:center;justify-content:center;margin:2px auto;cursor:pointer}
-.centro{text-align:center;display:flex;flex-direction:column;gap:2px}
-.monto{border:2px solid #c99b35;background:#fff;font-size:18px;font-weight:900;border-radius:4px;line-height:1}
-.carta-grande{width:100px;height:130px;margin:0 auto;background:#fff;border:2px solid #c99b35;border-radius:6px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:40px;font-weight:900}
-.carta-grande img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
-#nombre,#estado{font-size:10px;font-weight:900;line-height:1.1}
-button{padding:4px 6px;border:0;border-radius:4px;font-weight:900;font-size:10px;cursor:pointer}
-#gritar{background:#ffee00}
-#auto{background:#0a2a4a;color:#fff}
-#nuevo{background:#7030a0;color:#fff}
+*{box-sizing:border-box;margin:0;padding:0;font-family:Arial}
+body{background:#f5f2ea;width:100vw;height:100dvh;overflow:hidden;display:flex;flex-direction:column}
+.topbar{background:#0a2a4a;color:#fff;text-align:center;font-size:10px;padding:1px;border-bottom:1px solid #ffee00;flex:0 0 16px}
+.encabezado{display:flex;justify-content:space-between;font-weight:900;font-size:10px;padding:0 4px;flex:0 0 12px}
+.tablero{flex:1;display:grid;grid-template-columns:24px 1fr 110px 1fr 24px;gap:2px;padding:2px;min-height:0}
+.baraja{border:1.5px solid #c99b35;background:#fff;display:grid;grid-template-columns:repeat(4,1fr);gap:1px;padding:1px;border-radius:3px;overflow:hidden}
+.carta{position:relative;aspect-ratio:.72;background:#ddd;overflow:hidden}
+.carta img{position:absolute;inset:0;width:100%;height:100%;object-fit:fill}
+.carta.salio::after{content:'';position:absolute;inset:0;background:#0008}
+.cliente{width:20px;height:20px;border-radius:50%;background:#c99b35;color:#fff;border:1px solid #fff;font-weight:900;font-size:9px;display:flex;align-items:center;justify-content:center;margin:1px auto}
+.centro{display:flex;flex-direction:column;align-items:center;justify-content:space-between;gap:1px}
+.monto{border:1.5px solid #c99b35;background:#fff;font-weight:900;font-size:14px;border-radius:3px;padding:0 8px;width:100%;text-align:center}
+.carta-grande{width:84px;height:108px;background:#fff;border:1.5px solid #c99b35;border-radius:4px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:900;flex:0 0 108px}
+.carta-grande img{position:absolute;inset:0;width:100%;height:100%;object-fit:fill}
+#nombre,#estado{font-size:8px;font-weight:900;text-align:center;line-height:1}
+button{font-size:8px;padding:3px 5px;border:0;border-radius:3px;font-weight:900}
+#gritar{background:#ffee00}#auto{background:#0a2a4a;color:#fff}#nuevo{background:#7030a0;color:#fff}
 </style>
 </head>
 <body>
@@ -33,12 +31,12 @@ button{padding:4px 6px;border:0;border-radius:4px;font-weight:900;font-size:10px
 <div id="cIzq"></div>
 <div class="baraja" id="bIzq"></div>
 <div class="centro">
-<div style="background:#111;color:#fff;border-radius:4px;font-size:9px;padding:1px">ACUMULADO</div>
+<div style="background:#111;color:#fff;border-radius:3px;font-size:7px;padding:1px 4px;width:100%;text-align:center">ACUMULADO</div>
 <div class="monto">80</div>
-<div class="carta-grande" id="cG"><span id="cGtxt">1</span><img id="cGimg" onerror="this.style.display='none'"></div>
+<div class="carta-grande" id="cG"><span id="cGtxt">1</span><img id="cGimg"></div>
 <div id="nombre">LISTO</div>
-<div id="estado">54 disponibles</div>
-<div><button id="gritar" onclick="gritar()">GRITAR</button><button id="auto" onclick="auto()">AUTO</button><button id="nuevo" onclick="nuevo()">NUEVO</button></div>
+<div id="estado">54 disp.</div>
+<div style="display:flex;gap:1px"><button id="gritar" onclick="gritar()">GRITAR</button><button id="auto" onclick="auto()">AUTO</button><button id="nuevo" onclick="nuevo()">NUEVO</button></div>
 </div>
 <div class="baraja" id="bDer"></div>
 <div id="cDer"></div>
@@ -48,7 +46,12 @@ const N=["EL GALLO","EL DIABLITO","LA DAMA","EL CATRIN","EL PARAGUAS","LA SIRENA
 let disp=[],sal=new Set(),timer=null,gan=new Set(),prem=0;
 function ficha(n){let d=document.createElement("div");d.className="cliente";d.id="cl"+n;d.textContent=n;return d}
 function initClientes(){let iz=document.getElementById("cIzq"),de=document.getElementById("cDer");iz.innerHTML="";de.innerHTML="";for(let i=1;i<=10;i++)iz.appendChild(ficha(i));for(let i=11;i<=20;i++)de.appendChild(ficha(i))}
-function initBaraja(){let a=document.getElementById("bIzq"),b=document.getElementById("bDer");a.innerHTML="";b.innerHTML="";for(let i=1;i<=32;i++){let c=document.createElement("div");c.className="carta";c.id="m"+i;c.innerHTML=`<img src="CARTAS/${i}.jpg" loading="eager">`;if(i<=16)a.appendChild(c);else b.appendChild(c)}}
+function initBaraja(){let a=document.getElementById("bIzq"),b=document.getElementById("bDer");a.innerHTML="";b.innerHTML="";for(let i=1;i<=32;i++){let c=document.createElement("div");c.className="carta";c.id="m"+i;c.innerHTML=`<img src="CARTAS/${i}.jpg" onerror="this.src='CARTAS/${i}.JPG'">`;if(i<=16)a.appendChild(c);else b.appendChild(c)}}
 function prep(){disp=[...Array(54).keys()].map(i=>i+1);sal.clear();prem=0;gan.clear();document.querySelectorAll(".carta").forEach(e=>e.classList.remove("salio"))}
-function gritar(){if(!disp.length)return;let k=Math.floor(Math.random()*disp.length);let n=disp.splice(k,1)[0];sal.add(n);document.getElementById("cGtxt").textContent=n;let img=document.getElementById("cGimg");img.src=`CARTAS/${n}.jpg`;img.style.display="block";document.getElementById("nombre").textContent=N[n-1];document.getElementById("estado").textContent=n+"-"+N[n-1];let mm=document.getElementById("m"+n);if(mm)mm.classList.add("salio");comp()}
-const LIN={1:[1,2,3,4],2:[5,6,7,8],3:[9,10,11,12],4:[13,14,15,16],5:[17,18,19,20],6:[21,22,23,24],7:[25,26,27,28],8:[29,30,31,32],9
+function gritar(){if(!disp.length)return;let k=Math.floor(Math.random()*disp.length);let n=disp.splice(k,1)[0];sal.add(n);document.getElementById("cGtxt").textContent=n;let img=document.getElementById("cGimg");img.src=`CARTAS/${n}.jpg`;img.onerror=()=>img.src=`CARTAS/${n}.JPG`;document.getElementById("nombre").textContent=N[n-1];document.getElementById("estado").textContent=n+"-"+N[n-1];let mm=document.getElementById("m"+n);if(mm)mm.classList.add("salio")}
+function auto(){if(timer){clearInterval(timer);timer=null;return}gritar();timer=setInterval(gritar,2200)}
+function nuevo(){if(timer){clearInterval(timer);timer=null}document.querySelectorAll(".cliente").forEach(e=>{e.style.background="#c99b35";e.textContent=e.id.replace("cl","")});prep()}
+initClientes();initBaraja();prep();
+</script>
+</body>
+</html>
