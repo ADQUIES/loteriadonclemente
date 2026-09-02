@@ -48,7 +48,23 @@ body{margin:0;background:#f5f2ea;color:#111}
 .carta-mini{position:relative;aspect-ratio:.72;min-width:0;min-height:0;border:2px solid #fff;border-radius:4px;overflow:hidden;box-shadow:0 1px 4px #888;background:#ddd}
 .carta-mini>img{width:100%;height:100%;object-fit:fill;display:block}
 .numero{position:absolute;z-index:2;top:2px;left:3px;background:transparent;color:transparent;border:none;padding:1px 4px;font-size:12px;font-weight:900}
-.tapada{position:absolute;inset:0;background:rgba(0,0,0,.78);color:#ffee00;display:none;align-items:center;justify-content:center;font-size:clamp(17px,2.5vw,30px);font-weight:900;text-shadow:2px 2px #000}.tapadaImg{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;display:none}.usar-tapas .tapaImg{display:block}.usar-tapas .tapaTexto{display:none}
+.tapada{
+ position:absolute;
+ inset:0;
+ display:none;
+ align-items:center;
+ justify-content:center;
+ overflow:hidden;
+}
+
+.tapadaImg{
+ width:100%;
+ height:100%;
+ object-fit:fill;
+ position:absolute;
+ inset:0;
+ display:none;
+}
 .carta-mini.salio .tapada{display:flex}.carta-mini.salio .numero{display:none}
 
 .centro{grid-column:3;grid-row:1;text-align:center}
@@ -161,7 +177,7 @@ const NOMBRES=[
 let disponibles=[], salidas=new Set(), clientesOcultos=new Set(), reloj=null;
 // Usa las 4 imágenes TAPA1.jpg a TAPA4.jpg para cubrir las cartas del tablero.
 const USAR_TAPAS=true;
-const TAPAS=["CARTAS/TAPA1.jpg","CARTAS/TAPA2.jpg","CARTAS/TAPA3.jpg","CARTAS/TAPA4.jpg"];
+const TAPAS=["CARTAS/TAPA1.jpg"];
 
 function urlCarta(n){
   // Las cartas del repositorio están numeradas:
@@ -302,12 +318,35 @@ let ganadores=new Set();
 
 function comprobarGanadores(){
  for(let cliente=1;cliente<=20;cliente++){
+
+  // Ya tenemos los 3 premios
+  if(ganadores.size>=3){
+   parar();
+   return;
+  }
+
   if(ganadores.has(cliente))continue;
+
   const linea=LINEAS_CLIENTES[cliente] || [];
+
   if(linea.length!==4)continue;
+
   if(linea.every(c=>salidas.has(c))){
    ganadores.add(cliente);
+
    gritarLoteria(cliente);
+
+   // Al salir el tercer ganador, detener inmediatamente la baraja
+   if(ganadores.size>=3){
+    parar();
+
+    setTimeout(()=>{
+     document.getElementById("estado").textContent=
+       "🏆 ¡LOS 3 PREMIOS YA FUERON GANADOS! ¡JUEGO TERMINADO!";
+    },500);
+
+    return;
+   }
   }
  }
 }
