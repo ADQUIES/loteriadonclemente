@@ -9,7 +9,7 @@
 body{margin:0;background:#f5f2ea;color:#111}
 .topbar{background:#0a2a4a;color:#fff;text-align:center;padding:8px;border-bottom:4px solid #ffee00}
 .topbar h1{margin:0;font-size:clamp(20px,3vw,34px)}
-.contenedor{max-width:1500px;margin:auto;padding:10px}
+.contenedor{max-width:1500px;margin:auto;padding:10px;transform:translateY(-12px)}
 .encabezado{display:grid;grid-template-columns:70px 1fr 1fr 70px;align-items:center;gap:10px;margin-bottom:8px}
 .precio{font-size:clamp(38px,5vw,70px);font-weight:900;text-align:center}
 .premios{text-align:center;font-size:clamp(16px,2vw,27px);font-weight:900;line-height:1.1}
@@ -72,6 +72,7 @@ body{margin:0;background:#f5f2ea;color:#111}
 .estado-linea{margin-top:4px;color:#555}
 
 @media(max-width:900px){
+ .contenedor{transform:translateY(-6px);}
  .lateral{position:relative;display:flex;flex-direction:column;justify-content:space-around;align-items:center;min-height:100%;}
  .lateral .cliente{position:static;width:46px;height:46px;transform:none;}
  .encabezado{grid-template-columns:55px 1fr 55px}
@@ -100,73 +101,6 @@ body{margin:0;background:#f5f2ea;color:#111}
  .abajo{margin-top:0;}
  .abajo .grupo{width:100%;}
 }
-
-/* ===== AJUSTE FINAL DE POSICIONES ===== */
-
-/* Subir todo el tablero */
-.tablero{
-  transform:translateY(-10px);
-}
-
-/* Las fichas laterales quedan centradas con las filas de cartas */
-.izq .cliente,
-.der .cliente{
-  align-self:center;
-}
-
-/* Ajuste fino de las líneas izquierdas */
-.izq{
-  padding-top:3px;
-  padding-bottom:3px;
-}
-
-/* Ajuste fino de las líneas derechas */
-.der{
-  padding-top:3px;
-  padding-bottom:3px;
-}
-
-/* Línea 1: esquina superior izquierda de la carta 1 */
-.linea-esquina{
-  position:absolute;
-  z-index:30;
-}
-
-.linea1-esquina{
-  left:calc(62px + 8px);
-  top:0;
-  transform:translate(-50%,-18%);
-}
-
-/* Línea 20: esquina superior derecha de la carta 20 */
-.linea20-esquina{
-  right:calc(62px + 8px);
-  top:0;
-  transform:translate(50%,-18%);
-}
-
-/* El tablero pasa a ser referencia para las esquinas */
-.tablero{
-  position:relative;
-}
-
-/* En pantallas pequeñas las esquinas se recolocan */
-@media(max-width:900px){
-  .linea1-esquina{
-    left:42px;
-    top:0;
-  }
-
-  .linea20-esquina{
-    right:42px;
-    top:0;
-  }
-
-  .tablero{
-    transform:translateY(-6px);
-  }
-}
-
 </style>
 </head>
 <body>
@@ -174,16 +108,13 @@ body{margin:0;background:#f5f2ea;color:#111}
 
 <div class="contenedor">
   <div class="encabezado">
-<div class="precio">$20</div>
+    <button class="cliente" id="cliente1" onclick="toggleCliente(1)">1</button>
+    <div class="precio">$20</div>
     <div class="premios">1ra Línea: 100<br>2da Línea: 100<br>3ra Línea: 100</div>
-</div>
+    <button class="cliente" id="cliente20" onclick="toggleCliente(20)">20</button>
+  </div>
 
   <div class="tablero">
-
-<!-- LINEA 1: ESQUINA SUPERIOR IZQUIERDA DE CARTA 1 -->
-<div class="linea-esquina linea1-esquina">
-  <button class="cliente" id="cliente1" onclick="toggleCliente(1)">1</button>
-</div>
     <div class="lateral izq" id="clientesIzq"></div>
 
     <div class="baraja izqbar" id="barajaIzq"></div>
@@ -206,13 +137,7 @@ body{margin:0;background:#f5f2ea;color:#111}
 
     <div class="baraja derbar" id="barajaDer"></div>
 
-    <div class="lateral der" id="clientesDer">
-</div>
-
-<!-- LINEA 20: ESQUINA SUPERIOR DERECHA DE CARTA 20 -->
-<div class="linea-esquina linea20-esquina">
-  <button class="cliente" id="cliente20" onclick="toggleCliente(20)">20</button>
-</div></div>
+    <div class="lateral der" id="clientesDer"></div>
 
     <div class="abajo">
       <div class="grupo" id="clientesAbajoIzq"></div>
