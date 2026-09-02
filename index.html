@@ -100,6 +100,73 @@ body{margin:0;background:#f5f2ea;color:#111}
  .abajo{margin-top:0;}
  .abajo .grupo{width:100%;}
 }
+
+/* ===== AJUSTE FINAL DE POSICIONES ===== */
+
+/* Subir todo el tablero */
+.tablero{
+  transform:translateY(-10px);
+}
+
+/* Las fichas laterales quedan centradas con las filas de cartas */
+.izq .cliente,
+.der .cliente{
+  align-self:center;
+}
+
+/* Ajuste fino de las líneas izquierdas */
+.izq{
+  padding-top:3px;
+  padding-bottom:3px;
+}
+
+/* Ajuste fino de las líneas derechas */
+.der{
+  padding-top:3px;
+  padding-bottom:3px;
+}
+
+/* Línea 1: esquina superior izquierda de la carta 1 */
+.linea-esquina{
+  position:absolute;
+  z-index:30;
+}
+
+.linea1-esquina{
+  left:calc(62px + 8px);
+  top:0;
+  transform:translate(-50%,-18%);
+}
+
+/* Línea 20: esquina superior derecha de la carta 20 */
+.linea20-esquina{
+  right:calc(62px + 8px);
+  top:0;
+  transform:translate(50%,-18%);
+}
+
+/* El tablero pasa a ser referencia para las esquinas */
+.tablero{
+  position:relative;
+}
+
+/* En pantallas pequeñas las esquinas se recolocan */
+@media(max-width:900px){
+  .linea1-esquina{
+    left:42px;
+    top:0;
+  }
+
+  .linea20-esquina{
+    right:42px;
+    top:0;
+  }
+
+  .tablero{
+    transform:translateY(-6px);
+  }
+}
+
 </style>
 </head>
 <body>
@@ -107,13 +174,16 @@ body{margin:0;background:#f5f2ea;color:#111}
 
 <div class="contenedor">
   <div class="encabezado">
-    <button class="cliente" id="cliente1" onclick="toggleCliente(1)">1</button>
-    <div class="precio">$20</div>
+<div class="precio">$20</div>
     <div class="premios">1ra Línea: 100<br>2da Línea: 100<br>3ra Línea: 100</div>
-    <button class="cliente" id="cliente20" onclick="toggleCliente(20)">20</button>
-  </div>
+</div>
 
   <div class="tablero">
+
+<!-- LINEA 1: ESQUINA SUPERIOR IZQUIERDA DE CARTA 1 -->
+<div class="linea-esquina linea1-esquina">
+  <button class="cliente" id="cliente1" onclick="toggleCliente(1)">1</button>
+</div>
     <div class="lateral izq" id="clientesIzq"></div>
 
     <div class="baraja izqbar" id="barajaIzq"></div>
@@ -136,7 +206,13 @@ body{margin:0;background:#f5f2ea;color:#111}
 
     <div class="baraja derbar" id="barajaDer"></div>
 
-    <div class="lateral der" id="clientesDer"></div>
+    <div class="lateral der" id="clientesDer">
+</div>
+
+<!-- LINEA 20: ESQUINA SUPERIOR DERECHA DE CARTA 20 -->
+<div class="linea-esquina linea20-esquina">
+  <button class="cliente" id="cliente20" onclick="toggleCliente(20)">20</button>
+</div></div>
 
     <div class="abajo">
       <div class="grupo" id="clientesAbajoIzq"></div>
