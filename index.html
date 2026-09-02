@@ -3,336 +3,1907 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Lotería Don Clemente - 32 Cartas / 20 Clientes</title>
+<title>Lotería Don Clemente - 54 Cartas / Tablero 32</title>
+
 <style>
-*{box-sizing:border-box;font-family:Arial,sans-serif}
-body{margin:0;background:#f5f2ea;color:#111}
-.topbar{background:#0a2a4a;color:#fff;text-align:center;padding:8px;border-bottom:4px solid #ffee00}
-.topbar h1{margin:0;font-size:clamp(20px,3vw,34px)}
-.contenedor{max-width:1500px;margin:auto;padding:10px}
-.encabezado{display:grid;grid-template-columns:70px 1fr 1fr 70px;align-items:center;gap:10px;margin-bottom:8px}
-.precio{font-size:clamp(38px,5vw,70px);font-weight:900;text-align:center}
-.premios{text-align:center;font-size:clamp(16px,2vw,27px);font-weight:900;line-height:1.1}
-.cliente{width:62px;height:62px;border-radius:50%;border:3px solid #fff;background:#c99b35;color:#fff;font-weight:900;font-size:27px;box-shadow:0 3px 7px #777;cursor:pointer;transition:.2s}
-.cliente:hover{transform:scale(1.05)}
-.cliente.oculto{visibility:hidden;opacity:0;transform:scale(.3);pointer-events:none}
+
+*{
+ box-sizing:border-box;
+ font-family:Arial,sans-serif;
+}
+
+body{
+ margin:0;
+ background:#f5f2ea;
+ color:#111;
+}
+
+.topbar{
+ background:#0a2a4a;
+ color:#fff;
+ text-align:center;
+ padding:8px;
+ border-bottom:4px solid #ffee00;
+}
+
+.topbar h1{
+ margin:0;
+ font-size:clamp(20px,3vw,34px);
+}
+
+.contenedor{
+ max-width:1500px;
+ margin:auto;
+ padding:10px;
+}
+
+.encabezado{
+ display:grid;
+ grid-template-columns:70px 1fr 1fr 70px;
+ align-items:center;
+ gap:10px;
+ margin-bottom:8px;
+}
+
+.precio{
+ font-size:clamp(38px,5vw,70px);
+ font-weight:900;
+ text-align:center;
+}
+
+.premios{
+ text-align:center;
+ font-size:clamp(16px,2vw,27px);
+ font-weight:900;
+ line-height:1.1;
+}
+
+.cliente{
+ width:62px;
+ height:62px;
+ border-radius:50%;
+ border:3px solid #fff;
+ background:#c99b35;
+ color:#fff;
+ font-weight:900;
+ font-size:27px;
+ box-shadow:0 3px 7px #777;
+ cursor:pointer;
+ transition:.2s;
+}
+
+.cliente:hover{
+ transform:scale(1.05);
+}
+
+.cliente.oculto{
+ visibility:hidden;
+ opacity:0;
+ transform:scale(.3);
+ pointer-events:none;
+}
+
+
+/* =========================
+   TABLERO PRINCIPAL
+========================= */
 
 .tablero{
  display:grid;
- grid-template-columns:62px minmax(240px,1fr) minmax(280px,410px) minmax(240px,1fr) 62px;
+ grid-template-columns:
+  62px
+  minmax(240px,1fr)
+  minmax(280px,410px)
+  minmax(240px,1fr)
+  62px;
+
  grid-template-rows:auto auto;
+
  gap:6px 8px;
+
  align-items:stretch;
 }
-.lateral{display:grid;grid-template-rows:repeat(6,1fr);gap:7px;align-items:center;justify-items:center}
-.izq{grid-column:1;grid-row:1}
-.der{grid-column:5;grid-row:1}
-.baraja{border:4px solid #c99b35;border-radius:10px;padding:5px;background:#fff;display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
-.izqbar{grid-column:2;grid-row:1}
-.derbar{grid-column:4;grid-row:1}
-.carta-mini{position:relative;aspect-ratio:.72;border:2px solid #fff;border-radius:4px;overflow:hidden;box-shadow:0 1px 4px #888;background:#ddd}
-.carta-mini img{width:100%;height:100%;object-fit:cover;display:block}
-.numero{position:absolute;z-index:2;top:2px;left:3px;background:#fff;border-radius:3px;padding:1px 4px;font-size:12px;font-weight:900}
-.tapada{position:absolute;inset:0;background:rgba(0,0,0,.78);color:#ffee00;display:none;align-items:center;justify-content:center;font-size:clamp(17px,2.5vw,30px);font-weight:900;text-shadow:2px 2px #000}.tapadaImg{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;display:none}.usar-tapas .tapaImg{display:block}.usar-tapas .tapaTexto{display:none}
-.carta-mini.salio .tapada{display:flex}
 
-.centro{grid-column:3;grid-row:1;text-align:center}
-.acumulado{display:inline-block;background:#111;color:#fff;border-radius:12px;padding:4px 20px;font-weight:900}
-.monto{border:4px solid #c99b35;background:#fff;border-radius:10px;font-size:42px;font-weight:900;padding:2px 25px;margin:3px auto 8px;max-width:230px}
-.carta-grande{width:100%;max-width:300px;margin:auto;background:#fff;border:5px solid #c99b35;border-radius:14px;padding:6px;box-shadow:0 4px 10px #777}
-.carta-grande img{width:100%;aspect-ratio:.72;object-fit:cover;display:block;border-radius:6px}
-.nombre{font-size:clamp(20px,2.5vw,30px);font-weight:900;margin:5px}
-.cantando{background:#111;color:#fff;border-radius:9px;padding:5px;font-weight:900;font-size:18px}
-#estado{min-height:22px;font-weight:900;margin:5px}
-.controles{display:flex;justify-content:center;gap:6px;flex-wrap:wrap}
-.controles button{border:0;border-radius:9px;padding:10px 13px;font-weight:900;cursor:pointer}
-#gritar{background:#ffee00}#auto{background:#0a2a4a;color:#fff}#nuevo{background:#7030a0;color:#fff}
+.lateral{
+ display:grid;
+ grid-template-rows:repeat(6,1fr);
+ gap:7px;
+ align-items:center;
+ justify-items:center;
+}
 
-.abajo{grid-column:2/5;grid-row:2;display:flex;justify-content:space-between;align-items:center;gap:8px}
-.abajo .grupo{display:flex;gap:7px;justify-content:center}
-.abajo .cliente{width:58px;height:58px}
+.izq{
+ grid-column:1;
+ grid-row:1;
+}
 
-.instruccion{text-align:center;margin-top:8px;font-weight:900;font-size:14px}
-.estado-linea{margin-top:4px;color:#555}
+.der{
+ grid-column:5;
+ grid-row:1;
+}
+
+
+/* =========================
+   LAS 32 CARTAS DEL TABLERO
+========================= */
+
+.baraja{
+ border:4px solid #c99b35;
+ border-radius:10px;
+ padding:5px;
+ background:#fff;
+
+ display:grid;
+
+ grid-template-columns:
+ repeat(4,minmax(0,1fr));
+
+ gap:4px;
+
+ min-width:0;
+ min-height:0;
+}
+
+.izqbar{
+ grid-column:2;
+ grid-row:1;
+}
+
+.derbar{
+ grid-column:4;
+ grid-row:1;
+}
+
+.carta-mini{
+ position:relative;
+
+ aspect-ratio:.72;
+
+ min-width:0;
+ min-height:0;
+
+ border:2px solid #fff;
+ border-radius:4px;
+
+ overflow:hidden;
+
+ box-shadow:0 1px 4px #888;
+
+ background:#ddd;
+}
+
+
+/* IMAGEN DEL TABLERO */
+
+.carta-mini>img{
+ width:100%;
+ height:100%;
+
+ object-fit:fill;
+
+ display:block;
+}
+
+
+/* NUMERO PEQUEÑO */
+
+.numero{
+ position:absolute;
+
+ z-index:5;
+
+ top:2px;
+ left:3px;
+
+ background:#fff;
+
+ border-radius:3px;
+
+ padding:1px 4px;
+
+ font-size:12px;
+
+ font-weight:900;
+}
+
+
+/* =========================
+   TAPA DE LAS CARTAS
+========================= */
+
+.tapada{
+ position:absolute;
+
+ inset:0;
+
+ background:rgba(0,0,0,.78);
+
+ color:#ffee00;
+
+ display:none;
+
+ align-items:center;
+ justify-content:center;
+
+ font-size:clamp(17px,2.5vw,30px);
+
+ font-weight:900;
+
+ text-shadow:2px 2px #000;
+
+ z-index:10;
+}
+
+.tapadaImg{
+ width:100%;
+ height:100%;
+
+ object-fit:cover;
+
+ position:absolute;
+
+ inset:0;
+
+ display:none;
+}
+
+.usar-tapas .tapaImg{
+ display:block;
+}
+
+.usar-tapas .tapaTexto{
+ display:none;
+}
+
+
+/* Cuando la carta ya salió */
+
+.carta-mini.salio .tapada{
+ display:flex;
+}
+
+
+/* OCULTAR EL NUMERO AL TAPAR */
+
+.carta-mini.salio .numero{
+ display:none;
+}
+
+
+/* =========================
+   CENTRO
+========================= */
+
+.centro{
+ grid-column:3;
+ grid-row:1;
+
+ text-align:center;
+
+ min-width:0;
+}
+
+.acumulado{
+ display:inline-block;
+
+ background:#111;
+
+ color:#fff;
+
+ border-radius:12px;
+
+ padding:4px 20px;
+
+ font-weight:900;
+}
+
+.monto{
+ border:4px solid #c99b35;
+
+ background:#fff;
+
+ border-radius:10px;
+
+ font-size:42px;
+
+ font-weight:900;
+
+ padding:2px 25px;
+
+ margin:3px auto 8px;
+
+ max-width:230px;
+}
+
+
+/* =========================
+   CARTA GRANDE
+========================= */
+
+.carta-grande{
+ width:min(100%,260px);
+
+ margin:auto;
+
+ background:#fff;
+
+ border:5px solid #c99b35;
+
+ border-radius:14px;
+
+ padding:6px;
+
+ box-shadow:0 4px 10px #777;
+
+ overflow:hidden;
+}
+
+.carta-grande img{
+ width:100%;
+
+ height:auto;
+
+ aspect-ratio:.72;
+
+ object-fit:contain;
+
+ display:block;
+
+ border-radius:6px;
+}
+
+
+/* NOMBRE DE LA CARTA */
+
+.nombre{
+ font-size:clamp(20px,2.5vw,30px);
+
+ font-weight:900;
+
+ margin:5px;
+
+ min-height:34px;
+}
+
+
+/* CANTANDO */
+
+.cantando{
+ background:#111;
+
+ color:#fff;
+
+ border-radius:9px;
+
+ padding:5px;
+
+ font-weight:900;
+
+ font-size:18px;
+}
+
+
+/* ESTADO */
+
+#estado{
+ min-height:22px;
+
+ font-weight:900;
+
+ margin:5px;
+}
+
+
+/* =========================
+   BOTONES
+========================= */
+
+.controles{
+ display:flex;
+
+ justify-content:center;
+
+ gap:6px;
+
+ flex-wrap:wrap;
+}
+
+.controles button{
+ border:0;
+
+ border-radius:9px;
+
+ padding:10px 13px;
+
+ font-weight:900;
+
+ cursor:pointer;
+}
+
+#gritar{
+ background:#ffee00;
+}
+
+#auto{
+ background:#0a2a4a;
+
+ color:#fff;
+}
+
+#nuevo{
+ background:#7030a0;
+
+ color:#fff;
+}
+
+
+/* =========================
+   CLIENTES ABAJO
+========================= */
+
+.abajo{
+ grid-column:2/5;
+
+ grid-row:2;
+
+ display:flex;
+
+ justify-content:space-between;
+
+ align-items:center;
+
+ gap:8px;
+}
+
+.abajo .grupo{
+ display:flex;
+
+ gap:7px;
+
+ justify-content:center;
+}
+
+.abajo .cliente{
+ width:58px;
+
+ height:58px;
+}
+
+
+/* =========================
+   TEXTO INFORMATIVO
+========================= */
+
+.instruccion{
+ text-align:center;
+
+ margin-top:8px;
+
+ font-weight:900;
+
+ font-size:14px;
+}
+
+.estado-linea{
+ margin-top:4px;
+
+ color:#555;
+}
+
+
+/* =========================
+   CELULAR
+========================= */
 
 @media(max-width:900px){
- .encabezado{grid-template-columns:55px 1fr 55px}
- .encabezado .precio{grid-column:2}.encabezado .premios{grid-column:2;grid-row:2}.encabezado .cliente:first-child{grid-column:1;grid-row:1}.encabezado .cliente:last-child{grid-column:3;grid-row:1}
- .tablero{grid-template-columns:42px 1fr 1fr 42px;grid-template-rows:auto auto auto}
- .centro{grid-column:1/5;grid-row:1}.izq{grid-column:1;grid-row:2}.izqbar{grid-column:2;grid-row:2}.derbar{grid-column:3;grid-row:2}.der{grid-column:4;grid-row:2}
- .abajo{grid-column:1/5;grid-row:3;flex-wrap:wrap}
- .abajo .cliente{width:46px;height:46px;font-size:20px}
- .carta-grande{max-width:260px}
+
+ .encabezado{
+  grid-template-columns:55px 1fr 55px;
+ }
+
+ .encabezado .precio{
+  grid-column:2;
+ }
+
+ .encabezado .premios{
+  grid-column:2;
+  grid-row:2;
+ }
+
+ .encabezado .cliente:first-child{
+  grid-column:1;
+  grid-row:1;
+ }
+
+ .encabezado .cliente:last-child{
+  grid-column:3;
+  grid-row:1;
+ }
+
+
+ .tablero{
+  grid-template-columns:
+   42px
+   1fr
+   1fr
+   42px;
+
+  grid-template-rows:
+   auto
+   auto
+   auto;
+ }
+
+ .centro{
+  grid-column:1/5;
+  grid-row:1;
+ }
+
+ .izq{
+  grid-column:1;
+  grid-row:2;
+ }
+
+ .izqbar{
+  grid-column:2;
+  grid-row:2;
+ }
+
+ .derbar{
+  grid-column:3;
+  grid-row:2;
+ }
+
+ .der{
+  grid-column:4;
+  grid-row:2;
+ }
+
+ .abajo{
+  grid-column:1/5;
+
+  grid-row:3;
+
+  flex-wrap:wrap;
+ }
+
+ .abajo .cliente{
+  width:46px;
+  height:46px;
+  font-size:20px;
+ }
+
+ .carta-grande{
+  max-width:260px;
+ }
+
 }
+
 </style>
 </head>
+
+
 <body>
-<div class="topbar"><h1>🎴 LOTERÍA DON CLEMENTE 🎴</h1></div>
 
-<div class="contenedor">
-  <div class="encabezado">
-    <button class="cliente" id="cliente1" onclick="toggleCliente(1)">1</button>
-    <div class="precio">$20</div>
-    <div class="premios">1ra Línea: 100<br>2da Línea: 100<br>3ra Línea: 100</div>
-    <button class="cliente" id="cliente20" onclick="toggleCliente(20)">20</button>
-  </div>
 
-  <div class="tablero">
-    <div class="lateral izq" id="clientesIzq"></div>
+<div class="topbar">
 
-    <div class="baraja izqbar" id="barajaIzq"></div>
+<h1>🎴 LOTERÍA DON CLEMENTE 🎴</h1>
 
-    <div class="centro">
-      <div class="acumulado">ACUMULADO</div>
-      <div class="monto">80</div>
-      <div class="carta-grande">
-        <img id="cartaActual" alt="Carta actual">
-      </div>
-      <div class="nombre" id="nombreActual">LISTO</div>
-      <div class="cantando">CANTANDO: <span id="textoCantando">—</span></div>
-      <div id="estado">54 cartas disponibles en la baraja.</div>
-      <div class="controles">
-        <button id="gritar" onclick="gritarCarta()">🔊 GRITAR CARTA</button>
-        <button id="auto" onclick="automatico()">▶ AUTOMÁTICO</button>
-        <button id="nuevo" onclick="nuevoJuego()">🔄 NUEVO JUEGO</button>
-      </div>
-    </div>
-
-    <div class="baraja derbar" id="barajaDer"></div>
-
-    <div class="lateral der" id="clientesDer"></div>
-
-    <div class="abajo">
-      <div class="grupo" id="clientesAbajoIzq"></div>
-      <div class="grupo" id="clientesAbajoDer"></div>
-    </div>
-  </div>
-
-  <div class="instruccion"><b>BARaja: 54 cartas.</b> El tablero muestra 32; las cartas 33–54 pueden salir pero no se muestran en el tablero.<br><span class="estado-linea"> </span></div><div class="instruccion">
-    Cada número representa un CLIENTE. Al completar las 4 cartas de su línea, el programa grita:
-    <b>“¡LOTERÍA! ¡GANÓ EL CLIENTE X!”</b>
-    <div class="estado-linea">Haz clic en el número del cliente para ocultar su ficha cuando su línea esté ocupada.</div>
-  </div>
 </div>
 
+
+<div class="contenedor">
+
+
+<!-- =========================
+     ENCABEZADO
+========================= -->
+
+<div class="encabezado">
+
+<button
+ class="cliente"
+ id="cliente1"
+ onclick="toggleCliente(1)">
+1
+</button>
+
+
+<div class="precio">
+$20
+</div>
+
+
+<div class="premios">
+
+1ra Línea: 100<br>
+2da Línea: 100<br>
+3ra Línea: 100
+
+</div>
+
+
+<button
+ class="cliente"
+ id="cliente20"
+ onclick="toggleCliente(20)">
+20
+</button>
+
+</div>
+
+
+
+<!-- =========================
+     TABLERO
+========================= -->
+
+<div class="tablero">
+
+
+<!-- CLIENTES IZQUIERDA -->
+
+<div
+ class="lateral izq"
+ id="clientesIzq">
+</div>
+
+
+
+<!-- 16 CARTAS IZQUIERDA -->
+
+<div
+ class="baraja izqbar"
+ id="barajaIzq">
+</div>
+
+
+
+<!-- =========================
+     CENTRO
+========================= -->
+
+<div class="centro">
+
+
+<div class="acumulado">
+ACUMULADO
+</div>
+
+
+<div class="monto">
+80
+</div>
+
+
+<!-- CARTA GRANDE -->
+
+<div class="carta-grande">
+
+<img
+ id="cartaActual"
+ alt="Carta actual">
+
+</div>
+
+
+<!-- NOMBRE -->
+
+<div
+ class="nombre"
+ id="nombreActual">
+LISTO
+</div>
+
+
+<!-- CANTANDO -->
+
+<div class="cantando">
+
+CANTANDO:
+
+<span id="textoCantando">
+—
+</span>
+
+</div>
+
+
+<!-- ESTADO -->
+
+<div id="estado">
+
+54 cartas disponibles en la baraja.
+
+</div>
+
+
+<!-- BOTONES -->
+
+<div class="controles">
+
+
+<button
+ id="gritar"
+ onclick="gritarCarta()">
+
+🔊 GRITAR CARTA
+
+</button>
+
+
+<button
+ id="auto"
+ onclick="automatico()">
+
+▶ AUTOMÁTICO
+
+</button>
+
+
+<button
+ id="nuevo"
+ onclick="nuevoJuego()">
+
+🔄 NUEVO JUEGO
+
+</button>
+
+
+</div>
+
+
+</div>
+
+
+
+<!-- 16 CARTAS DERECHA -->
+
+<div
+ class="baraja derbar"
+ id="barajaDer">
+</div>
+
+
+
+<!-- CLIENTES DERECHA -->
+
+<div
+ class="lateral der"
+ id="clientesDer">
+</div>
+
+
+
+<!-- CLIENTES ABAJO -->
+
+<div class="abajo">
+
+
+<div
+ class="grupo"
+ id="clientesAbajoIzq">
+</div>
+
+
+<div
+ class="grupo"
+ id="clientesAbajoDer">
+</div>
+
+
+</div>
+
+
+</div>
+
+
+
+<!-- INFORMACIÓN -->
+
+<div class="instruccion">
+
+<b>
+BARAJA: 54 CARTAS
+</b>
+
+<br>
+
+El tablero muestra 32 cartas.
+
+Las cartas llamadas se cubren automáticamente con TAPA.
+
+<br>
+
+Cada número representa un CLIENTE.
+
+Al completar las 4 cartas de su línea,
+
+el programa anuncia:
+
+<b>
+“¡LOTERÍA! ¡GANÓ EL CLIENTE X!”
+</b>
+
+<br>
+
+Haz clic en el número del cliente para ocultar su ficha.
+
+</div>
+
+
+</div>
+
+
+
 <script>
+
+
+/* =====================================================
+   NOMBRES DE LAS 54 CARTAS
+===================================================== */
+
 const NOMBRES=[
-"EL GALLO","EL DIABLITO","LA DAMA","EL CATRÍN","EL PARAGUAS","LA SIRENA","LA ESCALERA","LA BOTELLA","EL BARRIL","EL ÁRBOL","EL MELÓN","EL VALIENTE","EL GORRITO","LA MUERTE","LA PERA","LA BANDERA","EL BANDOLÓN","EL VIOLONCELLO","LA GARZA","EL PÁJARO","LA MANO","LA BOTA","LA LUNA","EL COTORRO","EL BORRACHO","EL NEGRITO","EL CORAZÓN","LA ARAÑA","LA SANDÍA","EL TAMBOR","EL CAMARÓN","LAS JARAS","CARTA 33","CARTA 34","CARTA 35","CARTA 36","CARTA 37","CARTA 38","CARTA 39","CARTA 40","CARTA 41","CARTA 42","CARTA 43","CARTA 44","CARTA 45","CARTA 46","CARTA 47","CARTA 48","CARTA 49","CARTA 50","CARTA 51","CARTA 52","CARTA 53","CARTA 54"
+
+"EL GALLO",
+"EL DIABLITO",
+"LA DAMA",
+"EL CATRÍN",
+"EL PARAGUAS",
+"LA SIRENA",
+"LA ESCALERA",
+"LA BOTELLA",
+"EL BARRIL",
+"EL ÁRBOL",
+"EL MELÓN",
+"EL VALIENTE",
+"EL GORRITO",
+"LA MUERTE",
+"LA PERA",
+"LA BANDERA",
+"EL BANDOLÓN",
+"EL VIOLONCELLO",
+"LA GARZA",
+"EL PÁJARO",
+"LA MANO",
+"LA BOTA",
+"LA LUNA",
+"EL COTORRO",
+"EL BORRACHO",
+"EL NEGRITO",
+"EL CORAZÓN",
+"LA SANDÍA",
+"EL TAMBOR",
+"EL CAMARÓN",
+"LAS JARAS",
+"EL MÚSICO",
+"LA ARAÑA",
+"EL SOLDADO",
+"LA ESTRELLA",
+"EL CAZO",
+"EL MUNDO",
+"EL APACHE",
+"EL NOPAL",
+"EL ALACRÁN",
+"LA ROSA",
+"LA CALAVERA",
+"LA CAMPANA",
+"EL CANTARITO",
+"EL VENADO",
+"EL SOL",
+"LA CORONA",
+"LA CHALUPA",
+"EL PINO",
+"EL PESCADO",
+"LA PALMA",
+"LA MACETA",
+"EL ARPA"
+
 ];
 
-let disponibles=[], salidas=new Set(), clientesOcultos=new Set(), reloj=null;
-// Cambia a true si quieres usar las 4 imágenes TAPA1.jpg a TAPA4.jpg al cubrir cartas.
-const USAR_TAPAS=false;
-const TAPAS=["CARTAS/TAPA1.jpg","CARTAS/TAPA2.jpg","CARTAS/TAPA3.jpg","CARTAS/TAPA4.jpg"];
 
-function urlCarta(n){
-  // Las cartas del repositorio están numeradas:
-  // /CARTAS/1.jpg, /CARTAS/2.jpg ... /CARTAS/32.jpg
-  return `CARTAS/${n}.jpg`;
-}
+/* =====================================================
+   VARIABLES
+===================================================== */
 
-function configurarImagen(img,n){
-  if(!img)return;
-  img.src = urlCarta(n);
-  img.alt = NOMBRES[n-1] || `Carta ${n}`;
-  img.onerror = ()=>{
-    img.alt = `No se encontró CARTAS/${n}.jpg`;
-    img.style.background="#ddd";
-  };
-}
+let disponibles=[];
 
-function ficha(n){
- const b=document.createElement("button");
- b.className="cliente"; b.id="cliente"+n; b.textContent=n;
- b.title="Cliente "+n;
- b.onclick=()=>toggleCliente(n);
- return b;
-}
+let salidas=new Set();
 
-function crearClientes(){
- const izq=document.getElementById("clientesIzq"), der=document.getElementById("clientesDer");
- const ai=document.getElementById("clientesAbajoIzq"), ad=document.getElementById("clientesAbajoDer");
- izq.innerHTML="";der.innerHTML="";ai.innerHTML="";ad.innerHTML="";
- // EXACTAMENTE como la imagen:
- // izquierda 1-6
- for(let n=1;n<=6;n++) izq.appendChild(ficha(n));
- // derecha 20-15
- for(let n=20;n>=15;n--) der.appendChild(ficha(n));
- // abajo izquierda 7-10
- for(let n=7;n<=10;n++) ai.appendChild(ficha(n));
- // abajo derecha 11-14
- for(let n=11;n<=14;n++) ad.appendChild(ficha(n));
-}
-
-function crearBaraja(){
- const a=document.getElementById("barajaIzq"),b=document.getElementById("barajaDer");
- a.innerHTML="";b.innerHTML="";
- for(let n=1;n<=32;n++){
-  const c=document.createElement("div");
-  c.className="carta-mini";c.id="mini"+n;
-  c.innerHTML=`<span class="numero">${n}</span><img id="imgMini${n}" alt="${NOMBRES[n-1]}"><div class="tapada"><span class="tapaTexto">SALIDA</span><img class="tapaImg" alt="Tapa"></div>`;
-  const tapa=c.querySelector(".tapaImg"); if(USAR_TAPAS){ tapa.src=TAPAS[(n-1)%TAPAS.length]; c.querySelector(".tapada").classList.add("usar-tapas"); }
-  const imgMini=c.querySelector("#imgMini"+n);
-  configurarImagen(imgMini,n);
-  (n<=16?a:b).appendChild(c);
- }
-}
-
-function toggleCliente(n){
- const el=document.getElementById("cliente"+n);
- if(!el)return;
- if(clientesOcultos.has(n)){
-  clientesOcultos.delete(n); el.classList.remove("oculto");
- }else{
-  clientesOcultos.add(n); el.classList.add("oculto");
- }
-}
-
-function preparar(){
- disponibles=Array.from({length:54},(_,i)=>i+1);
- salidas.clear();
- for(let n=1;n<=32;n++)document.getElementById("mini"+n).classList.remove("salio");
- configurarImagen(document.getElementById("cartaActual"),1);
- document.getElementById("nombreActual").textContent="LISTO";
- document.getElementById("textoCantando").textContent="—";
- document.getElementById("estado").textContent="54 cartas disponibles en la baraja. Tablero: 32 cartas."; const contador=document.getElementById("contadorBaraja"); if(contador) contador.textContent="54 / 54";
-}
-
-function gritarCarta(){
- if(!disponibles.length){
-  parar();
-  document.getElementById("estado").textContent="🎉 ¡YA SALIERON LAS 54 CARTAS DE LA BARAJA!";
-  return;
- }
- const i=Math.floor(Math.random()*disponibles.length);
- const n=disponibles.splice(i,1)[0];
- salidas.add(n);
-
- configurarImagen(document.getElementById("cartaActual"),n);
- document.getElementById("cartaActual").alt=NOMBRES[n-1];
- document.getElementById("nombreActual").textContent=NOMBRES[n-1];
- document.getElementById("textoCantando").textContent=NOMBRES[n-1];
- const mini=document.getElementById("mini"+n);
- if(mini) mini.classList.add("salio");
- document.getElementById("estado").textContent=`Carta ${n} • ${NOMBRES[n-1]} • ${disponibles.length} restantes`;
- const contador=document.getElementById("contadorBaraja");
- if(contador) contador.textContent=`${disponibles.length} / 54`;
-
- comprobarGanadores();
-
- if("speechSynthesis" in window){
-  speechSynthesis.cancel();
-  const voz=new SpeechSynthesisUtterance(NOMBRES[n-1]);
-  voz.lang="es-MX";voz.rate=.82;voz.pitch=1;
-  speechSynthesis.speak(voz);
- }
-}
-
-/*
-  AQUÍ SE DEFINEN LAS 20 LÍNEAS DE CLIENTE.
-  Cada cliente debe tener EXACTAMENTE 4 CARTAS.
-  Cambia los números de cada arreglo para que correspondan
-  a las 4 cartas que pertenecen a ese cliente.
-
-  Ejemplo:
-  cliente 2 = cartas 5,6,7,8
-*/
-const LINEAS_CLIENTES={
-  1:[1,2,3,4],
-  2:[5,6,7,8],
-  3:[9,10,11,12],
-  4:[13,14,15,16],
-  5:[17,18,19,20],
-  6:[21,22,23,24],
-  7:[25,26,27,28],
-  8:[29,30,31,32],
-  9:[1,6,11,16],
-  10:[17,22,27,32],
-  11:[4,9,14,19],
-  12:[13,18,23,28],
-  13:[5,10,15,20],
-  14:[8,13,18,23],
-  15:[2,7,12,17],
-  16:[16,21,26,31],
-  17:[3,8,13,18],
-  18:[15,20,25,30],
-  19:[4,14,24,32],
-  20:[1,11,21,31]
-};
+let clientesOcultos=new Set();
 
 let ganadores=new Set();
 
-function comprobarGanadores(){
- for(let cliente=1;cliente<=20;cliente++){
-  if(ganadores.has(cliente))continue;
-  const linea=LINEAS_CLIENTES[cliente] || [];
-  if(linea.length!==4)continue;
-  if(linea.every(c=>salidas.has(c))){
-   ganadores.add(cliente);
-   gritarLoteria(cliente);
+let reloj=null;
+
+
+/* =====================================================
+   TAPAS
+===================================================== */
+
+const USAR_TAPAS=true;
+
+
+const TAPAS=[
+
+"CARTAS/TAPA1.jpg",
+
+"CARTAS/TAPA2.jpg",
+
+"CARTAS/TAPA3.jpg",
+
+"CARTAS/TAPA4.jpg"
+
+];
+
+
+
+/* =====================================================
+   RUTA DE LAS CARTAS
+===================================================== */
+
+function urlCarta(n){
+
+ return `CARTAS/${n}.jpg`;
+
+}
+
+
+
+/* =====================================================
+   CARGAR IMAGEN
+===================================================== */
+
+function configurarImagen(img,n){
+
+ if(!img)return;
+
+
+ img.src=urlCarta(n);
+
+
+ img.alt=
+  NOMBRES[n-1] ||
+  `Carta ${n}`;
+
+
+ img.onerror=function(){
+
+  console.error(
+   "No se encontró:",
+   urlCarta(n)
+  );
+
+ };
+
+}
+
+
+
+/* =====================================================
+   CREAR FICHA DE CLIENTE
+===================================================== */
+
+function ficha(n){
+
+ const b=
+  document.createElement("button");
+
+
+ b.className="cliente";
+
+ b.id="cliente"+n;
+
+ b.textContent=n;
+
+ b.title="Cliente "+n;
+
+
+ b.onclick=function(){
+
+  toggleCliente(n);
+
+ };
+
+
+ return b;
+
+}
+
+
+
+/* =====================================================
+   CREAR LOS 20 CLIENTES
+===================================================== */
+
+function crearClientes(){
+
+ const izq=
+  document.getElementById(
+   "clientesIzq"
+  );
+
+ const der=
+  document.getElementById(
+   "clientesDer"
+  );
+
+ const ai=
+  document.getElementById(
+   "clientesAbajoIzq"
+  );
+
+ const ad=
+  document.getElementById(
+   "clientesAbajoDer"
+  );
+
+
+ izq.innerHTML="";
+ der.innerHTML="";
+ ai.innerHTML="";
+ ad.innerHTML="";
+
+
+ /* CLIENTES 1 - 6 */
+
+ for(
+  let n=1;
+  n<=6;
+  n++
+ ){
+
+  izq.appendChild(
+   ficha(n)
+  );
+
+ }
+
+
+ /* CLIENTES 20 - 15 */
+
+ for(
+  let n=20;
+  n>=15;
+  n--
+ ){
+
+  der.appendChild(
+   ficha(n)
+  );
+
+ }
+
+
+ /* CLIENTES 7 - 10 */
+
+ for(
+  let n=7;
+  n<=10;
+  n++
+ ){
+
+  ai.appendChild(
+   ficha(n)
+  );
+
+ }
+
+
+ /* CLIENTES 11 - 14 */
+
+ for(
+  let n=11;
+  n<=14;
+  n++
+ ){
+
+  ad.appendChild(
+   ficha(n)
+  );
+
+ }
+
+}
+
+
+
+/* =====================================================
+   CREAR LAS 32 CARTAS DEL TABLERO
+===================================================== */
+
+function crearBaraja(){
+
+ const izquierda=
+  document.getElementById(
+   "barajaIzq"
+  );
+
+ const derecha=
+  document.getElementById(
+   "barajaDer"
+  );
+
+
+ izquierda.innerHTML="";
+ derecha.innerHTML="";
+
+
+ /*
+    IMPORTANTE:
+
+    SOLO SE CREAN 32 CARTAS
+    EN EL TABLERO.
+
+    LA BARAJA REAL TIENE 54.
+ */
+
+
+ for(
+  let n=1;
+  n<=32;
+  n++
+ ){
+
+  const carta=
+   document.createElement("div");
+
+
+  carta.className=
+   "carta-mini";
+
+
+  carta.id=
+   "mini"+n;
+
+
+  carta.innerHTML=`
+
+   <span class="numero">
+    ${n}
+   </span>
+
+   <img
+    id="imgMini${n}"
+    alt="${NOMBRES[n-1]}"
+   >
+
+   <div class="tapada">
+
+    <span class="tapaTexto">
+     SALIDA
+    </span>
+
+    <img
+     class="tapaImg"
+     alt="Tapa"
+    >
+
+   </div>
+
+  `;
+
+
+  /* TAPA */
+
+  const tapa=
+   carta.querySelector(
+    ".tapaImg"
+   );
+
+
+  if(USAR_TAPAS){
+
+   tapa.src=
+    TAPAS[
+     (n-1)%TAPAS.length
+    ];
+
+
+   carta
+    .querySelector(".tapada")
+    .classList
+    .add("usar-tapas");
+
   }
+
+
+  /* IMAGEN */
+
+  const img=
+   carta.querySelector(
+    "#imgMini"+n
+   );
+
+
+  configurarImagen(
+   img,
+   n
+  );
+
+
+  /* AGREGAR AL TABLERO */
+
+  if(n<=16){
+
+   izquierda.appendChild(
+    carta
+   );
+
+  }else{
+
+   derecha.appendChild(
+    carta
+   );
+
+  }
+
  }
+
 }
 
-function gritarLoteria(cliente){
- const texto=`¡Lotería! ¡Ganó el cliente ${cliente}!`;
- document.getElementById("estado").textContent="🎉 "+texto;
 
- if("speechSynthesis" in window){
+
+/* =====================================================
+   OCULTAR CLIENTE
+===================================================== */
+
+function toggleCliente(n){
+
+ const el=
+  document.getElementById(
+   "cliente"+n
+  );
+
+
+ if(!el)return;
+
+
+ if(
+  clientesOcultos.has(n)
+ ){
+
+  clientesOcultos.delete(n);
+
+  el.classList.remove(
+   "oculto"
+  );
+
+ }else{
+
+  clientesOcultos.add(n);
+
+  el.classList.add(
+   "oculto"
+  );
+
+ }
+
+}
+
+
+
+/* =====================================================
+   NUEVA BARAJA
+===================================================== */
+
+function preparar(){
+
+ /*
+    AQUI ESTA LA CLAVE:
+
+    SE CREAN LAS 54 CARTAS
+    DE LA BARAJA.
+ */
+
+ disponibles=
+  Array.from(
+   {length:54},
+   (_,i)=>i+1
+  );
+
+
+ salidas.clear();
+
+
+ ganadores.clear();
+
+
+ /* QUITAR TAPAS DE LAS 32 */
+
+ for(
+  let n=1;
+  n<=32;
+  n++
+ ){
+
+  const mini=
+   document.getElementById(
+    "mini"+n
+   );
+
+
+  if(mini){
+
+   mini.classList.remove(
+    "salio"
+   );
+
+  }
+
+ }
+
+
+ /* CARTA INICIAL */
+
+ configurarImagen(
+  document.getElementById(
+   "cartaActual"
+  ),
+  1
+ );
+
+
+ document.getElementById(
+  "nombreActual"
+ ).textContent=
+  "LISTO";
+
+
+ document.getElementById(
+  "textoCantando"
+ ).textContent=
+  "—";
+
+
+ document.getElementById(
+  "estado"
+ ).textContent=
+  "54 cartas disponibles en la baraja.";
+
+}
+
+
+
+/* =====================================================
+   GRITAR CARTA
+===================================================== */
+
+function gritarCarta(){
+
+ /* YA NO QUEDAN CARTAS */
+
+ if(
+  disponibles.length===0
+ ){
+
+  parar();
+
+
+  document.getElementById(
+   "estado"
+  ).textContent=
+   "🎉 ¡YA SALIERON LAS 54 CARTAS!";
+
+
+  return;
+
+ }
+
+
+ /* ELEGIR CARTA AL AZAR */
+
+ const posicion=
+  Math.floor(
+   Math.random()*
+   disponibles.length
+  );
+
+
+ const n=
+  disponibles.splice(
+   posicion,
+   1
+  )[0];
+
+
+ /* GUARDAR CARTA CANTADA */
+
+ salidas.add(n);
+
+
+ /* MOSTRAR CARTA GRANDE */
+
+ configurarImagen(
+  document.getElementById(
+   "cartaActual"
+  ),
+  n
+ );
+
+
+ /* MOSTRAR NOMBRE */
+
+ const nombre=
+  NOMBRES[n-1];
+
+
+ document.getElementById(
+  "nombreActual"
+ ).textContent=
+  nombre;
+
+
+ document.getElementById(
+  "textoCantando"
+ ).textContent=
+  nombre;
+
+
+ /* ESTADO */
+
+ document.getElementById(
+  "estado"
+ ).textContent=
+  `${nombre} • ${disponibles.length} cartas restantes`;
+
+
+ /* =================================================
+    SI LA CARTA ESTA ENTRE LAS 32 DEL TABLERO
+    SE TAPA.
+ ================================================= */
+
+ if(n>=1 && n<=32){
+
+  const mini=
+   document.getElementById(
+    "mini"+n
+   );
+
+
+  if(mini){
+
+   mini.classList.add(
+    "salio"
+   );
+
+  }
+
+ }
+
+
+ /* COMPROBAR LOTERÍA */
+
+ comprobarGanadores();
+
+
+ /* =================================================
+    VOZ
+ ================================================= */
+
+ if(
+  "speechSynthesis"
+  in window
+ ){
+
   speechSynthesis.cancel();
-  const voz=new SpeechSynthesisUtterance(texto);
-  voz.lang="es-MX";voz.rate=.78;voz.pitch=1.1;
-  speechSynthesis.speak(voz);
+
+
+  const voz=
+   new SpeechSynthesisUtterance(
+    nombre
+   );
+
+
+  voz.lang=
+   "es-MX";
+
+
+  voz.rate=
+   .82;
+
+
+  voz.pitch=
+   1;
+
+
+  speechSynthesis.speak(
+   voz
+  );
+
  }
- setTimeout(()=>alert("🎉 ¡LOTERÍA! 🎉\n\n¡Ganó el cliente "+cliente+"!"),150);
+
 }
+
+
+
+/* =====================================================
+   LINEAS DE CLIENTES
+=====================================================
+
+   ATENCION:
+
+   ESTOS NUMEROS SON SOLO DE EJEMPLO.
+
+   AQUI VAMOS A PONER DESPUES LAS 4 CARTAS
+   REALES DE CADA CLIENTE.
+*/
+
+const LINEAS_CLIENTES={
+
+ 1:[1,2,3,4],
+
+ 2:[5,6,7,8],
+
+ 3:[9,10,11,12],
+
+ 4:[13,14,15,16],
+
+ 5:[17,18,19,20],
+
+ 6:[21,22,23,24],
+
+ 7:[25,26,27,28],
+
+ 8:[29,30,31,32],
+
+ 9:[1,6,11,16],
+
+ 10:[17,22,27,32],
+
+ 11:[4,9,14,19],
+
+ 12:[13,18,23,28],
+
+ 13:[5,10,15,20],
+
+ 14:[8,13,18,23],
+
+ 15:[2,7,12,17],
+
+ 16:[16,21,26,31],
+
+ 17:[3,8,13,18],
+
+ 18:[15,20,25,30],
+
+ 19:[4,14,24,32],
+
+ 20:[1,11,21,31]
+
+};
+
+
+
+/* =====================================================
+   COMPROBAR GANADORES
+===================================================== */
+
+function comprobarGanadores(){
+
+ for(
+  let cliente=1;
+  cliente<=20;
+  cliente++
+ ){
+
+  if(
+   ganadores.has(cliente)
+  ){
+
+   continue;
+
+  }
+
+
+  const linea=
+   LINEAS_CLIENTES[
+    cliente
+   ] || [];
+
+
+  if(
+   linea.length!==4
+  ){
+
+   continue;
+
+  }
+
+
+  const gano=
+   linea.every(
+    carta=>
+     salidas.has(carta)
+   );
+
+
+  if(gano){
+
+   ganadores.add(
+    cliente
+   );
+
+
+   gritarLoteria(
+    cliente
+   );
+
+  }
+
+ }
+
+}
+
+
+
+/* =====================================================
+   ANUNCIAR LOTERÍA
+===================================================== */
+
+function gritarLoteria(
+ cliente
+){
+
+ const texto=
+  `¡Lotería! ¡Ganó el cliente ${cliente}!`;
+
+
+ document.getElementById(
+  "estado"
+ ).textContent=
+  "🎉 "+texto;
+
+
+ if(
+  "speechSynthesis"
+  in window
+ ){
+
+  speechSynthesis.cancel();
+
+
+  const voz=
+   new SpeechSynthesisUtterance(
+    texto
+   );
+
+
+  voz.lang=
+   "es-MX";
+
+
+  voz.rate=
+   .78;
+
+
+  voz.pitch=
+   1.1;
+
+
+  speechSynthesis.speak(
+   voz
+  );
+
+ }
+
+
+ setTimeout(
+  function(){
+
+   alert(
+    "🎉 ¡LOTERÍA! 🎉\n\n"+
+    "¡Ganó el cliente "+
+    cliente+
+    "!"
+   );
+
+  },
+  150
+ );
+
+}
+
+
+
+/* =====================================================
+   AUTOMÁTICO
+===================================================== */
 
 function automatico(){
- if(reloj){parar();return}
- if(!disponibles.length){
-  document.getElementById("estado").textContent="🎉 ¡YA SALIERON LAS 54 CARTAS DE LA BARAJA!";
+
+ /* SI YA ESTA FUNCIONANDO, DETENER */
+
+ if(reloj){
+
+  parar();
+
   return;
+
  }
- document.getElementById("auto").textContent="⏸ DETENER";
+
+
+ /* NO HAY CARTAS */
+
+ if(
+  disponibles.length===0
+ ){
+
+  return;
+
+ }
+
+
+ document.getElementById(
+  "auto"
+ ).textContent=
+  "⏸ DETENER";
+
+
+ /* SACAR PRIMERA */
+
  gritarCarta();
- if(disponibles.length){
-  reloj=setInterval(()=>{
-   if(!disponibles.length){
-    parar();
-    return;
-   }
-   gritarCarta();
-  },4000);
+
+
+ /* CADA 4 SEGUNDOS */
+
+ if(
+  disponibles.length
+ ){
+
+  reloj=
+   setInterval(
+    function(){
+
+     if(
+      disponibles.length===0
+     ){
+
+      parar();
+
+      return;
+
+     }
+
+
+     gritarCarta();
+
+    },
+    4000
+   );
+
  }
+
 }
+
+
+
+/* =====================================================
+   DETENER AUTOMÁTICO
+===================================================== */
 
 function parar(){
- if(reloj){clearInterval(reloj);reloj=null}
- document.getElementById("auto").textContent="▶ AUTOMÁTICO";
+
+ if(reloj){
+
+  clearInterval(
+   reloj
+  );
+
+  reloj=null;
+
+ }
+
+
+ document.getElementById(
+  "auto"
+ ).textContent=
+  "▶ AUTOMÁTICO";
+
 }
+
+
+
+/* =====================================================
+   NUEVO JUEGO
+===================================================== */
 
 function nuevoJuego(){
+
+ /* DETENER AUTOMÁTICO */
+
  parar();
- ganadores.clear();
- // Las fichas de cliente vuelven a aparecer.
- clientesOcultos.clear();
- for(let n=1;n<=20;n++){
-  const e=document.getElementById("cliente"+n);
-  if(e)e.classList.remove("oculto");
+
+
+ /* DETENER VOZ */
+
+ if(
+  "speechSynthesis"
+  in window
+ ){
+
+  speechSynthesis.cancel();
+
  }
+
+
+ /* REINICIAR GANADORES */
+
+ ganadores.clear();
+
+
+ /* REAPARECER CLIENTES */
+
+ clientesOcultos.clear();
+
+
+ for(
+  let n=1;
+  n<=20;
+  n++
+ ){
+
+  const el=
+   document.getElementById(
+    "cliente"+n
+   );
+
+
+  if(el){
+
+   el.classList.remove(
+    "oculto"
+   );
+
+  }
+
+ }
+
+
+ /* REINICIAR BARAJA */
+
  preparar();
+
 }
 
+
+
+/* =====================================================
+   INICIAR TODO
+===================================================== */
+
 function iniciarJuego(){
+
  crearClientes();
+
  crearBaraja();
+
  nuevoJuego();
+
 }
-if(document.readyState==="loading"){
- window.addEventListener("DOMContentLoaded",iniciarJuego);
+
+
+/* SI EL HTML TODAVÍA ESTA CARGANDO */
+
+if(
+ document.readyState===
+ "loading"
+){
+
+ window.addEventListener(
+  "DOMContentLoaded",
+  iniciarJuego
+ );
+
 }else{
+
  iniciarJuego();
+
 }
+
+
 </script>
+
 </body>
 </html>
