@@ -89,7 +89,7 @@ body{margin:0;background:#f5f2ea;color:#111}
         <img id="cartaActual" alt="Carta actual">
       </div>
       <div class="nombre" id="nombreActual">LISTO</div>
-      <div class="cantando">CANTANDO: <span id="cantando">—</span></div>
+      <div class="cantando">CANTANDO: <span id="textoCantando">—</span></div>
       <div id="estado">54 cartas disponibles en la baraja.</div>
       <div class="controles">
         <button id="gritar" onclick="gritarCarta()">🔊 GRITAR CARTA</button>
@@ -117,14 +117,7 @@ body{margin:0;background:#f5f2ea;color:#111}
 
 <script>
 const NOMBRES=[
-"EL GALLO","EL DIABLITO","LA DAMA","EL CATRÍN",
-"EL PARAGUAS","LA SIRENA","LA ESCALERA","LA BOTELLA",
-"EL BARRIL","EL ÁRBOL","EL MELÓN","EL VALIENTE",
-"EL GORRITO","LA MUERTE","LA PERA","LA BANDERA",
-"EL BANDOLÓN","EL VIOLONCELLO","LA GARZA","EL PÁJARO",
-"LA MANO","LA BOTA","LA LUNA","EL COTORRO",
-"EL BORRACHO","EL NEGRITO","EL CORAZÓN","LA ARAÑA",
-"LA SANDÍA","EL TAMBOR","EL CAMARÓN","LAS JARAS"
+"EL GALLO","EL DIABLITO","LA DAMA","EL CATRÍN","EL PARAGUAS","LA SIRENA","LA ESCALERA","LA BOTELLA","EL BARRIL","EL ÁRBOL","EL MELÓN","EL VALIENTE","EL GORRITO","LA MUERTE","LA PERA","LA BANDERA","EL BANDOLÓN","EL VIOLONCELLO","LA GARZA","EL PÁJARO","LA MANO","LA BOTA","LA LUNA","EL COTORRO","EL BORRACHO","EL NEGRITO","EL CORAZÓN","LA ARAÑA","LA SANDÍA","EL TAMBOR","EL CAMARÓN","LAS JARAS","CARTA 33","CARTA 34","CARTA 35","CARTA 36","CARTA 37","CARTA 38","CARTA 39","CARTA 40","CARTA 41","CARTA 42","CARTA 43","CARTA 44","CARTA 45","CARTA 46","CARTA 47","CARTA 48","CARTA 49","CARTA 50","CARTA 51","CARTA 52","CARTA 53","CARTA 54"
 ];
 
 let disponibles=[], salidas=new Set(), clientesOcultos=new Set(), reloj=null;
@@ -139,10 +132,12 @@ function urlCarta(n){
 }
 
 function configurarImagen(img,n){
+  if(!img)return;
   img.src = urlCarta(n);
   img.alt = NOMBRES[n-1] || `Carta ${n}`;
   img.onerror = ()=>{
     img.alt = `No se encontró CARTAS/${n}.jpg`;
+    img.style.background="#ddd";
   };
 }
 
@@ -177,7 +172,8 @@ function crearBaraja(){
   c.className="carta-mini";c.id="mini"+n;
   c.innerHTML=`<span class="numero">${n}</span><img id="imgMini${n}" alt="${NOMBRES[n-1]}"><div class="tapada"><span class="tapaTexto">SALIDA</span><img class="tapaImg" alt="Tapa"></div>`;
   const tapa=c.querySelector(".tapaImg"); if(USAR_TAPAS){ tapa.src=TAPAS[(n-1)%TAPAS.length]; c.querySelector(".tapada").classList.add("usar-tapas"); }
-  configurarImagen(document.getElementById("imgMini"+n),n);
+  const imgMini=c.querySelector("#imgMini"+n);
+  configurarImagen(imgMini,n);
   (n<=16?a:b).appendChild(c);
  }
 }
@@ -198,7 +194,7 @@ function preparar(){
  for(let n=1;n<=32;n++)document.getElementById("mini"+n).classList.remove("salio");
  configurarImagen(document.getElementById("cartaActual"),1);
  document.getElementById("nombreActual").textContent="LISTO";
- document.getElementById("cantando").textContent="—";
+ document.getElementById("textoCantando").textContent="—";
  document.getElementById("estado").textContent="54 cartas disponibles en la baraja. Tablero: 32 cartas."; const contador=document.getElementById("contadorBaraja"); if(contador) contador.textContent="54 / 54";
 }
 
@@ -215,7 +211,7 @@ function gritarCarta(){
  configurarImagen(document.getElementById("cartaActual"),n);
  document.getElementById("cartaActual").alt=NOMBRES[n-1];
  document.getElementById("nombreActual").textContent=NOMBRES[n-1];
- document.getElementById("cantando").textContent=NOMBRES[n-1];
+ document.getElementById("textoCantando").textContent=NOMBRES[n-1];
  const mini=document.getElementById("mini"+n);
  if(mini) mini.classList.add("salio");
  document.getElementById("estado").textContent=`Carta ${n} • ${NOMBRES[n-1]} • ${disponibles.length} restantes`;
