@@ -33,7 +33,7 @@ body{margin:0;background:#f5f2ea;color:#111}
 .carta-mini{position:relative;aspect-ratio:.72;border:2px solid #fff;border-radius:4px;overflow:hidden;box-shadow:0 1px 4px #888;background:#ddd}
 .carta-mini img{width:100%;height:100%;object-fit:cover;display:block}
 .numero{position:absolute;z-index:2;top:2px;left:3px;background:#fff;border-radius:3px;padding:1px 4px;font-size:12px;font-weight:900}
-.tapada{position:absolute;inset:0;background:rgba(0,0,0,.78);color:#ffee00;display:none;align-items:center;justify-content:center;font-size:clamp(17px,2.5vw,30px);font-weight:900;text-shadow:2px 2px #000}
+.tapada{position:absolute;inset:0;background:rgba(0,0,0,.78);color:#ffee00;display:none;align-items:center;justify-content:center;font-size:clamp(17px,2.5vw,30px);font-weight:900;text-shadow:2px 2px #000}.tapadaImg{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;display:none}.usar-tapas .tapaImg{display:block}.usar-tapas .tapaTexto{display:none}
 .carta-mini.salio .tapada{display:flex}
 
 .centro{grid-column:3;grid-row:1;text-align:center}
@@ -128,18 +128,21 @@ const NOMBRES=[
 ];
 
 let disponibles=[], salidas=new Set(), clientesOcultos=new Set(), reloj=null;
+// Cambia a true si quieres usar las 4 imágenes TAPA1.jpg a TAPA4.jpg al cubrir cartas.
+const USAR_TAPAS=false;
+const TAPAS=["cartas/TAPA1.jpg","cartas/TAPA2.jpg","cartas/TAPA3.jpg","cartas/TAPA4.jpg"];
 
 function urlCarta(n){
   // Las cartas del repositorio están numeradas:
-  // /cartas/1.JPG, /cartas/2.JPG ... /cartas/32.JPG
-  return `cartas/${n}.JPG`;
+  // /cartas/1.jpg, /cartas/2.jpg ... /cartas/32.jpg
+  return `cartas/${n}.jpg`;
 }
 
 function configurarImagen(img,n){
   img.src = urlCarta(n);
   img.alt = NOMBRES[n-1] || `Carta ${n}`;
   img.onerror = ()=>{
-    img.alt = `No se encontró cartas/${n}.JPG`;
+    img.alt = `No se encontró cartas/${n}.jpg`;
   };
 }
 
@@ -172,7 +175,8 @@ function crearBaraja(){
  for(let n=1;n<=32;n++){
   const c=document.createElement("div");
   c.className="carta-mini";c.id="mini"+n;
-  c.innerHTML=`<span class="numero">${n}</span><img id="imgMini${n}" alt="${NOMBRES[n-1]}"><div class="tapada">SALIDA</div>`;
+  c.innerHTML=`<span class="numero">${n}</span><img id="imgMini${n}" alt="${NOMBRES[n-1]}"><div class="tapada"><span class="tapaTexto">SALIDA</span><img class="tapaImg" alt="Tapa"></div>`;
+  const tapa=c.querySelector(".tapaImg"); if(USAR_TAPAS){ tapa.src=TAPAS[(n-1)%TAPAS.length]; c.querySelector(".tapada").classList.add("usar-tapas"); }
   configurarImagen(document.getElementById("imgMini"+n),n);
   (n<=16?a:b).appendChild(c);
  }
