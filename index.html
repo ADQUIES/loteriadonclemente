@@ -90,7 +90,7 @@ body{margin:0;background:#f5f2ea;color:#111}
       </div>
       <div class="nombre" id="nombreActual">LISTO</div>
       <div class="cantando">CANTANDO: <span id="cantando">—</span></div>
-      <div id="estado">32 cartas disponibles.</div>
+      <div id="estado">54 cartas disponibles en la baraja.</div>
       <div class="controles">
         <button id="gritar" onclick="gritarCarta()">🔊 GRITAR CARTA</button>
         <button id="auto" onclick="automatico()">▶ AUTOMÁTICO</button>
@@ -108,7 +108,7 @@ body{margin:0;background:#f5f2ea;color:#111}
     </div>
   </div>
 
-  <div class="instruccion">
+  <div class="instruccion"><b>BARaja: 54 cartas.</b> El tablero muestra 32; las cartas 33–54 pueden salir pero no se muestran en el tablero.<br><span class="estado-linea"> </span></div><div class="instruccion">
     Cada número representa un CLIENTE. Al completar las 4 cartas de su línea, el programa grita:
     <b>“¡LOTERÍA! ¡GANÓ EL CLIENTE X!”</b>
     <div class="estado-linea">Haz clic en el número del cliente para ocultar su ficha cuando su línea esté ocupada.</div>
@@ -130,19 +130,19 @@ const NOMBRES=[
 let disponibles=[], salidas=new Set(), clientesOcultos=new Set(), reloj=null;
 // Cambia a true si quieres usar las 4 imágenes TAPA1.jpg a TAPA4.jpg al cubrir cartas.
 const USAR_TAPAS=false;
-const TAPAS=["cartas/TAPA1.jpg","cartas/TAPA2.jpg","cartas/TAPA3.jpg","cartas/TAPA4.jpg"];
+const TAPAS=["CARTAS/TAPA1.jpg","CARTAS/TAPA2.jpg","CARTAS/TAPA3.jpg","CARTAS/TAPA4.jpg"];
 
 function urlCarta(n){
   // Las cartas del repositorio están numeradas:
-  // /cartas/1.jpg, /cartas/2.jpg ... /cartas/32.jpg
-  return `cartas/${n}.jpg`;
+  // /CARTAS/1.jpg, /CARTAS/2.jpg ... /CARTAS/32.jpg
+  return `CARTAS/${n}.jpg`;
 }
 
 function configurarImagen(img,n){
   img.src = urlCarta(n);
   img.alt = NOMBRES[n-1] || `Carta ${n}`;
   img.onerror = ()=>{
-    img.alt = `No se encontró cartas/${n}.jpg`;
+    img.alt = `No se encontró CARTAS/${n}.jpg`;
   };
 }
 
@@ -193,19 +193,19 @@ function toggleCliente(n){
 }
 
 function preparar(){
- disponibles=Array.from({length:32},(_,i)=>i+1);
+ disponibles=Array.from({length:54},(_,i)=>i+1);
  salidas.clear();
  for(let n=1;n<=32;n++)document.getElementById("mini"+n).classList.remove("salio");
  configurarImagen(document.getElementById("cartaActual"),1);
  document.getElementById("nombreActual").textContent="LISTO";
  document.getElementById("cantando").textContent="—";
- document.getElementById("estado").textContent="32 cartas disponibles.";
+ document.getElementById("estado").textContent="54 cartas disponibles en la baraja.";
 }
 
 function gritarCarta(){
  if(!disponibles.length){
   parar();
-  document.getElementById("estado").textContent="🎉 ¡YA SALIERON LAS 32 CARTAS!";
+  document.getElementById("estado").textContent="🎉 ¡YA SALIERON LAS 54 CARTAS DE LA BARAJA!";
   return;
  }
  const i=Math.floor(Math.random()*disponibles.length);
@@ -216,8 +216,10 @@ function gritarCarta(){
  document.getElementById("cartaActual").alt=NOMBRES[n-1];
  document.getElementById("nombreActual").textContent=NOMBRES[n-1];
  document.getElementById("cantando").textContent=NOMBRES[n-1];
- document.getElementById("mini"+n).classList.add("salio");
+ const mini=document.getElementById("mini"+n);\n if(mini) mini.classList.add("salio");
  document.getElementById("estado").textContent=`Carta ${n} • ${NOMBRES[n-1]} • ${disponibles.length} restantes`;
+
+ comprobarGanadores();
 
  if("speechSynthesis" in window){
   speechSynthesis.cancel();
@@ -255,7 +257,7 @@ const LINEAS_CLIENTES={
   16:[16,21,26,31],
   17:[3,8,13,18],
   18:[15,20,25,30],
-  19:[4,14,24,34],
+  19:[4,14,24,32],
   20:[1,11,21,31]
 };
 
@@ -288,9 +290,21 @@ function gritarLoteria(cliente){
 
 function automatico(){
  if(reloj){parar();return}
+ if(!disponibles.length){
+  document.getElementById("estado").textContent="🎉 ¡YA SALIERON LAS 54 CARTAS DE LA BARAJA!";
+  return;
+ }
  document.getElementById("auto").textContent="⏸ DETENER";
  gritarCarta();
- reloj=setInterval(gritarCarta,4000);
+ if(disponibles.length){
+  reloj=setInterval(()=>{
+   if(!disponibles.length){
+    parar();
+    return;
+   }
+   gritarCarta();
+  },4000);
+ }
 }
 
 function parar(){
