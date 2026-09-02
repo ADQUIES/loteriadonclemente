@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -6,7 +7,11 @@
 <title>Lotería Don Clemente - 32 Cartas / 20 Clientes</title>
 
 <style>
-*{box-sizing:border-box;font-family:Arial,sans-serif}
+
+*{
+ box-sizing:border-box;
+ font-family:Arial,sans-serif
+}
 
 body{
  margin:0;
@@ -89,6 +94,22 @@ body{
  opacity:0;
  transform:scale(.3);
  pointer-events:none
+}
+
+/* ===== CLIENTE GANADOR ===== */
+
+.cliente.ganador{
+ opacity:.45;
+ filter:grayscale(100%);
+ background:#555;
+ color:#ffee00;
+ border:3px solid #ffee00;
+ box-shadow:0 0 0 3px #111,0 0 12px #ffee00;
+ cursor:default;
+}
+
+.cliente.ganador:hover{
+ transform:none;
 }
 
 /* ===== TABLERO ===== */
@@ -569,6 +590,7 @@ body{
   width:100%;
  }
 }
+
 </style>
 </head>
 
@@ -770,12 +792,6 @@ const MAX_PREMIOS=3;
 
 /* ===== TAPA ===== */
 
-/*
- IMPORTANTE:
- El nombre debe coincidir EXACTAMENTE
- con el archivo que tienes dentro de CARTAS.
-*/
-
 const USAR_TAPAS=true;
 
 const TAPA="CARTAS/TAPA1.jpg";
@@ -929,6 +945,10 @@ function toggleCliente(n){
 
  if(!el)return;
 
+ /* No permitir ocultar una ficha que ya ganó */
+ if(el.classList.contains("ganador"))
+  return;
+
  if(clientesOcultos.has(n)){
 
   clientesOcultos.delete(n);
@@ -942,6 +962,35 @@ function toggleCliente(n){
   el.classList.add("oculto");
 
  }
+}
+
+
+/* ===== MARCAR CLIENTE GANADOR ===== */
+
+function marcarGanador(cliente,numeroPremio){
+
+ const ficha=document.getElementById("cliente"+cliente);
+
+ if(!ficha)return;
+
+ /* Quitamos cualquier estado anterior */
+ ficha.classList.remove("oculto");
+
+ /* Marcamos como ganador */
+ ficha.classList.add("ganador");
+
+ /* Mostramos el número del premio */
+ ficha.textContent=numeroPremio;
+
+ /* Actualizamos información */
+ ficha.dataset.cliente=cliente;
+
+ ficha.title=
+  "Cliente "+cliente+
+  " • Ganó el premio "+numeroPremio;
+
+ /* Evitamos que se pueda ocultar */
+ ficha.onclick=null;
 }
 
 
@@ -1138,6 +1187,13 @@ function comprobarGanadores(){
 
    premiosObtenidos++;
 
+   /* ===== MARCAR GANADOR ===== */
+
+   marcarGanador(
+    cliente,
+    premiosObtenidos
+   );
+
    gritarLoteria(
     cliente,
     premiosObtenidos
@@ -1292,8 +1348,20 @@ function nuevoJuego(){
   const e=
    document.getElementById("cliente"+n);
 
-  if(e)
+  if(e){
+
+   /* Regresar ficha a su estado normal */
+
    e.classList.remove("oculto");
+
+   e.classList.remove("ganador");
+
+   e.textContent=n;
+
+   e.title="Cliente "+n;
+
+   e.onclick=()=>toggleCliente(n);
+  }
  }
 
  preparar();
@@ -1329,3 +1397,4 @@ if(document.readyState==="loading"){
 
 </body>
 </html>
+```
