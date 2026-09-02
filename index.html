@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -6,6 +7,7 @@
 <title>Lotería Don Clemente - 32 Cartas / 20 Clientes</title>
 
 <style>
+
 *{box-sizing:border-box;font-family:Arial,sans-serif}
 
 body{
@@ -46,14 +48,14 @@ body{
   62px;
  align-items:center;
  gap:6px 8px;
- margin-bottom:8px;
+ margin-bottom:8px
 }
 
 .precio{
  grid-column:2;
  font-size:clamp(38px,5vw,70px);
  font-weight:900;
- text-align:center;
+ text-align:center
 }
 
 .premios{
@@ -61,7 +63,7 @@ body{
  text-align:center;
  font-size:clamp(16px,2vw,27px);
  font-weight:900;
- line-height:1.1;
+ line-height:1.1
 }
 
 /* ===== CLIENTES ===== */
@@ -296,6 +298,28 @@ body{
  display:none;
 }
 
+/* ===== LÍNEA GANADORA ===== */
+
+.carta-mini.linea-ganadora{
+ opacity:.48;
+}
+
+.carta-mini.linea-ganadora::after{
+ content:attr(data-premio);
+ position:absolute;
+ inset:0;
+ z-index:10;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ background:rgba(0,0,0,.18);
+ color:#ffee00;
+ font-size:clamp(12px,2vw,24px);
+ font-weight:900;
+ text-shadow:2px 2px 3px #000;
+ pointer-events:none;
+}
+
 /* ===== CENTRO ===== */
 
 .centro{
@@ -404,7 +428,7 @@ body{
   minmax(280px,410px)
   minmax(0,1fr);
  gap:8px;
- align-items:start;
+ align-items:start
 }
 
 .abajo .grupo{
@@ -569,6 +593,7 @@ body{
   width:100%;
  }
 }
+
 </style>
 </head>
 
@@ -580,114 +605,114 @@ body{
 
 <div class="contenedor">
 
- <!-- ===== PRECIO Y PREMIOS ===== -->
+<!-- ===== PRECIO Y PREMIOS ===== -->
 
- <div class="encabezado">
+<div class="encabezado">
 
-  <div class="precio">$20</div>
+ <div class="precio">$20</div>
 
-  <div class="premios">
-   1ra Línea: 100<br>
-   2da Línea: 100<br>
-   3ra Línea: 100
-  </div>
-
+ <div class="premios">
+  1ra Línea: 100<br>
+  2da Línea: 100<br>
+  3ra Línea: 100
  </div>
 
- <div class="tablero">
+</div>
 
-  <div class="lateral izq" id="clientesIzq"></div>
+<div class="tablero">
 
-  <div class="baraja izqbar" id="barajaIzq"></div>
+ <div class="lateral izq" id="clientesIzq"></div>
 
-  <div class="centro">
+ <div class="baraja izqbar" id="barajaIzq"></div>
 
-   <div class="acumulado">
-    ACUMULADO
-   </div>
+ <div class="centro">
 
-   <div class="monto">
-    80
-   </div>
-
-   <div class="carta-grande">
-    <img id="cartaActual" alt="Carta actual">
-   </div>
-
-   <div class="nombre" id="nombreActual">
-    LISTO
-   </div>
-
-   <div class="cantando">
-    CANTANDO:
-    <span id="textoCantando">—</span>
-   </div>
-
-   <div id="estado">
-    54 cartas disponibles en la baraja.
-   </div>
-
-   <div class="controles">
-
-    <button id="gritar" onclick="gritarCarta()">
-     🔊 GRITAR CARTA
-    </button>
-
-    <button id="auto" onclick="automatico()">
-     ▶ AUTOMÁTICO
-    </button>
-
-    <button id="nuevo" onclick="nuevoJuego()">
-     🔄 NUEVO JUEGO
-    </button>
-
-   </div>
-
+  <div class="acumulado">
+   ACUMULADO
   </div>
 
-  <div class="baraja derbar" id="barajaDer"></div>
+  <div class="monto">
+   80
+  </div>
 
-  <div class="lateral der" id="clientesDer"></div>
+  <div class="carta-grande">
+   <img id="cartaActual" alt="Carta actual">
+  </div>
 
-  <div class="abajo">
+  <div class="nombre" id="nombreActual">
+   LISTO
+  </div>
 
-   <div class="grupo" id="clientesAbajoIzq"></div>
+  <div class="cantando">
+   CANTANDO:
+   <span id="textoCantando">—</span>
+  </div>
 
-   <div class="grupo" id="clientesAbajoDer"></div>
+  <div id="estado">
+   54 cartas disponibles en la baraja.
+  </div>
+
+  <div class="controles">
+
+   <button id="gritar" onclick="gritarCarta()">
+    🔊 GRITAR CARTA
+   </button>
+
+   <button id="auto" onclick="automatico()">
+    ▶ AUTOMÁTICO
+   </button>
+
+   <button id="nuevo" onclick="nuevoJuego()">
+    🔄 NUEVO JUEGO
+   </button>
 
   </div>
 
  </div>
 
- <div class="instruccion">
+ <div class="baraja derbar" id="barajaDer"></div>
 
-  <b>BARAJA: 54 cartas.</b>
-  El tablero muestra 32 cartas;
-  la baraja completa tiene 54.
-  Las cartas llamadas se cubren con TAPA.
+ <div class="lateral der" id="clientesDer"></div>
 
-  <br>
+ <div class="abajo">
 
-  <span class="estado-linea"></span>
+  <div class="grupo" id="clientesAbajoIzq"></div>
 
- </div>
-
- <div class="instruccion">
-
-  Cada número representa un CLIENTE.
-  Al completar las 4 cartas de su línea,
-  el programa grita:
-
-  <b>
-   “¡LOTERÍA! ¡GANÓ EL CLIENTE X!”
-  </b>
-
-  <div class="estado-linea">
-   Haz clic en el número del cliente
-   para ocultar su ficha cuando su línea esté ocupada.
-  </div>
+  <div class="grupo" id="clientesAbajoDer"></div>
 
  </div>
+
+</div>
+
+<div class="instruccion">
+
+ <b>BARAJA: 54 cartas.</b>
+ El tablero muestra 32 cartas;
+ la baraja completa tiene 54.
+ Las cartas llamadas se cubren con TAPA.
+
+ <br>
+
+ <span class="estado-linea"></span>
+
+</div>
+
+<div class="instruccion">
+
+ Cada número representa un CLIENTE.
+ Al completar las 4 cartas de su línea,
+ el programa grita:
+
+ <b>
+  “¡LOTERÍA! ¡GANÓ EL CLIENTE X!”
+ </b>
+
+ <div class="estado-linea">
+  Haz clic en el número del cliente
+  para ocultar su ficha cuando su línea esté ocupada.
+ </div>
+
+</div>
 
 </div>
 
@@ -962,8 +987,15 @@ function preparar(){
 
   const carta=document.getElementById("mini"+n);
 
-  if(carta)
+  if(carta){
+
    carta.classList.remove("salio");
+
+   carta.classList.remove("linea-ganadora");
+
+   carta.removeAttribute("data-premio");
+
+  }
 
  }
 
@@ -1117,6 +1149,30 @@ const LINEAS_CLIENTES={
 };
 
 
+/* ===== MARCAR LÍNEA GANADORA ===== */
+
+function marcarLineaGanadora(cliente,numeroPremio){
+
+ const linea=LINEAS_CLIENTES[cliente] || [];
+
+ linea.forEach(cartaNumero=>{
+
+  const carta=document.getElementById("mini"+cartaNumero);
+
+  if(!carta)return;
+
+  carta.classList.add("linea-ganadora");
+
+  carta.setAttribute(
+   "data-premio",
+   "PREMIO "+numeroPremio
+  );
+
+ });
+
+}
+
+
 /* ===== COMPROBAR GANADORES ===== */
 
 function comprobarGanadores(){
@@ -1137,6 +1193,13 @@ function comprobarGanadores(){
    ganadores.add(cliente);
 
    premiosObtenidos++;
+
+   /* ===== MARCAR LA LÍNEA GANADORA ===== */
+
+   marcarLineaGanadora(
+    cliente,
+    premiosObtenidos
+   );
 
    gritarLoteria(
     cliente,
@@ -1329,3 +1392,4 @@ if(document.readyState==="loading"){
 
 </body>
 </html>
+```
