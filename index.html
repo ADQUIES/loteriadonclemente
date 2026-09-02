@@ -24,15 +24,29 @@ body{margin:0;background:#f5f2ea;color:#111}
  gap:6px 8px;
  align-items:stretch;
 }
-.lateral{display:grid;grid-template-rows:repeat(6,1fr);gap:7px;align-items:center;justify-items:center}
+.lateral{position:relative;display:block;min-height:100%;}
+.lateral .cliente{position:absolute;width:70px;height:70px;}
 .izq{grid-column:1;grid-row:1}
 .der{grid-column:5;grid-row:1}
+/* Clientes laterales alineados con las filas reales de las cartas */
+.izq .cliente:nth-child(1){top:0;left:50%;transform:translate(-50%,-50%);}
+.izq .cliente:nth-child(2){top:12.5%;left:50%;transform:translate(-50%,-50%);}
+.izq .cliente:nth-child(3){top:37.5%;left:50%;transform:translate(-50%,-50%);}
+.izq .cliente:nth-child(4){top:62.5%;left:50%;transform:translate(-50%,-50%);}
+.izq .cliente:nth-child(5){top:87.5%;left:50%;transform:translate(-50%,-50%);}
+.izq .cliente:nth-child(6){top:100%;left:100%;transform:translate(-100%,-50%);}
+.der .cliente:nth-child(1){top:0;left:50%;transform:translate(-50%,-50%);}
+.der .cliente:nth-child(2){top:12.5%;left:50%;transform:translate(-50%,-50%);}
+.der .cliente:nth-child(3){top:37.5%;left:50%;transform:translate(-50%,-50%);}
+.der .cliente:nth-child(4){top:62.5%;left:50%;transform:translate(-50%,-50%);}
+.der .cliente:nth-child(5){top:87.5%;left:50%;transform:translate(-50%,-50%);}
+.der .cliente:nth-child(6){top:100%;left:0;transform:translate(0,-50%);}
 .baraja{border:4px solid #c99b35;border-radius:10px;padding:5px;background:#fff;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;min-width:0;min-height:0}
 .izqbar{grid-column:2;grid-row:1}
 .derbar{grid-column:4;grid-row:1}
 .carta-mini{position:relative;aspect-ratio:.72;min-width:0;min-height:0;border:2px solid #fff;border-radius:4px;overflow:hidden;box-shadow:0 1px 4px #888;background:#ddd}
 .carta-mini>img{width:100%;height:100%;object-fit:fill;display:block}
-.numero{position:absolute;z-index:2;top:2px;left:3px;background:#fff;border-radius:3px;padding:1px 4px;font-size:12px;font-weight:900}
+.numero{position:absolute;z-index:2;top:2px;left:3px;background:transparent;color:transparent;border:none;padding:1px 4px;font-size:12px;font-weight:900}
 .tapada{position:absolute;inset:0;background:rgba(0,0,0,.78);color:#ffee00;display:none;align-items:center;justify-content:center;font-size:clamp(17px,2.5vw,30px);font-weight:900;text-shadow:2px 2px #000}.tapadaImg{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;display:none}.usar-tapas .tapaImg{display:block}.usar-tapas .tapaTexto{display:none}
 .carta-mini.salio .tapada{display:flex}.carta-mini.salio .numero{display:none}
 
@@ -48,14 +62,18 @@ body{margin:0;background:#f5f2ea;color:#111}
 .controles button{border:0;border-radius:9px;padding:10px 13px;font-weight:900;cursor:pointer}
 #gritar{background:#ffee00}#auto{background:#0a2a4a;color:#fff}#nuevo{background:#7030a0;color:#fff}
 
-.abajo{grid-column:2/5;grid-row:2;display:flex;justify-content:space-between;align-items:center;gap:8px}
-.abajo .grupo{display:flex;gap:7px;justify-content:center}
-.abajo .cliente{width:58px;height:58px}
+.abajo{grid-column:2/5;grid-row:2;display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,410px) minmax(0,1fr);gap:8px;align-items:start;}
+.abajo .grupo{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;justify-items:center;width:100%;}
+.abajo #clientesAbajoIzq{grid-column:1;}
+.abajo #clientesAbajoDer{grid-column:3;}
+.abajo .cliente{width:64px;height:64px}
 
-.instruccion{text-align:center;margin-top:8px;font-weight:900;font-size:14px}
+.instruccion{display:none}
 .estado-linea{margin-top:4px;color:#555}
 
 @media(max-width:900px){
+ .lateral{position:relative;display:flex;flex-direction:column;justify-content:space-around;align-items:center;min-height:100%;}
+ .lateral .cliente{position:static;width:46px;height:46px;transform:none;}
  .encabezado{grid-template-columns:55px 1fr 55px}
  .encabezado .precio{grid-column:2}.encabezado .premios{grid-column:2;grid-row:2}.encabezado .cliente:first-child{grid-column:1;grid-row:1}.encabezado .cliente:last-child{grid-column:3;grid-row:1}
  .tablero{grid-template-columns:42px 1fr 1fr 42px;grid-template-rows:auto auto auto}
@@ -75,6 +93,13 @@ body{margin:0;background:#f5f2ea;color:#111}
  .abajo .cliente{width:64px;height:64px;}
 }
 
+
+/* ===== ALINEACIÓN EXACTA DE CLIENTES AL 90% ===== */
+@media(min-width:901px){
+ .lateral{min-height:100%;}
+ .abajo{margin-top:0;}
+ .abajo .grupo{width:100%;}
+}
 </style>
 </head>
 <body>
