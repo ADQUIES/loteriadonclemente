@@ -2,453 +2,314 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>LOTERÍA DON CLEMENTE - 32 CARTAS</title>
-
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lotería Don Clemente - 32 Cartas / 20 Clientes</title>
 <style>
 *{box-sizing:border-box;font-family:Arial,sans-serif}
-body{
-  margin:0;
-  background:#f4f1e9;
-  color:#111;
-  overflow-x:hidden;
-}
-.topbar{
-  background:#0a2a4a;
-  color:#fff;
-  padding:10px;
-  text-align:center;
-  border-bottom:4px solid #ffee00;
-}
+body{margin:0;background:#f5f2ea;color:#111}
+.topbar{background:#0a2a4a;color:#fff;text-align:center;padding:8px;border-bottom:4px solid #ffee00}
 .topbar h1{margin:0;font-size:clamp(20px,3vw,34px)}
-.topbar small{font-size:13px}
+.contenedor{max-width:1500px;margin:auto;padding:10px}
+.encabezado{display:grid;grid-template-columns:70px 1fr 1fr 70px;align-items:center;gap:10px;margin-bottom:8px}
+.precio{font-size:clamp(38px,5vw,70px);font-weight:900;text-align:center}
+.premios{text-align:center;font-size:clamp(16px,2vw,27px);font-weight:900;line-height:1.1}
+.cliente{width:62px;height:62px;border-radius:50%;border:3px solid #fff;background:#c99b35;color:#fff;font-weight:900;font-size:27px;box-shadow:0 3px 7px #777;cursor:pointer;transition:.2s}
+.cliente:hover{transform:scale(1.05)}
+.cliente.oculto{visibility:hidden;opacity:0;transform:scale(.3);pointer-events:none}
 
-.contenedor{
-  max-width:1500px;
-  margin:auto;
-  padding:12px;
+.tablero{
+ display:grid;
+ grid-template-columns:62px minmax(240px,1fr) minmax(280px,410px) minmax(240px,1fr) 62px;
+ grid-template-rows:auto auto;
+ gap:6px 8px;
+ align-items:stretch;
 }
-
-.premios{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:10px;
-  margin-bottom:10px;
-  font-weight:900;
-  font-size:clamp(16px,2vw,28px);
-}
-.precio{
-  font-size:clamp(30px,4vw,55px);
-}
-.premiosTexto{text-align:center;line-height:1.15}
-
-.ficha{
-  width:58px;
-  height:58px;
-  border-radius:50%;
-  border:3px solid #fff;
-  background:#c99b35;
-  color:#fff;
-  font-weight:900;
-  font-size:25px;
-  box-shadow:0 3px 7px #777;
-  cursor:pointer;
-}
-.ficha:hover{transform:scale(1.05)}
-.ficha.activa{
-  background:#ffee00;
-  color:#111;
-  border-color:#111;
-}
-
-.juego{
-  display:grid;
-  grid-template-columns:1fr minmax(280px,420px) 1fr;
-  gap:15px;
-  align-items:start;
-}
-
-.baraja{
-  border:4px solid #c99b35;
-  border-radius:12px;
-  padding:7px;
-  background:#fff;
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:5px;
-}
-
-.carta-mini{
-  position:relative;
-  aspect-ratio:0.72;
-  border:3px solid #fff;
-  border-radius:5px;
-  overflow:hidden;
-  box-shadow:0 1px 4px #888;
-  background:#ddd;
-}
-.carta-mini img{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  display:block;
-}
-.numero{
-  position:absolute;
-  top:3px;
-  left:4px;
-  z-index:3;
-  background:#fff;
-  border-radius:3px;
-  padding:1px 4px;
-  font-size:12px;
-  font-weight:900;
-}
-.carta-mini .tapada{
-  position:absolute;
-  inset:0;
-  z-index:5;
-  display:none;
-  align-items:center;
-  justify-content:center;
-  background:rgba(0,0,0,.72);
-  color:#ffee00;
-  font-size:clamp(20px,3vw,35px);
-  font-weight:900;
-  text-shadow:2px 2px #000;
-}
+.lateral{display:grid;grid-template-rows:repeat(6,1fr);gap:7px;align-items:center;justify-items:center}
+.izq{grid-column:1;grid-row:1}
+.der{grid-column:5;grid-row:1}
+.baraja{border:4px solid #c99b35;border-radius:10px;padding:5px;background:#fff;display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+.izqbar{grid-column:2;grid-row:1}
+.derbar{grid-column:4;grid-row:1}
+.carta-mini{position:relative;aspect-ratio:.72;border:2px solid #fff;border-radius:4px;overflow:hidden;box-shadow:0 1px 4px #888;background:#ddd}
+.carta-mini img{width:100%;height:100%;object-fit:cover;display:block}
+.numero{position:absolute;z-index:2;top:2px;left:3px;background:#fff;border-radius:3px;padding:1px 4px;font-size:12px;font-weight:900}
+.tapada{position:absolute;inset:0;background:rgba(0,0,0,.78);color:#ffee00;display:none;align-items:center;justify-content:center;font-size:clamp(17px,2.5vw,30px);font-weight:900;text-shadow:2px 2px #000}
 .carta-mini.salio .tapada{display:flex}
 
-.centro{
-  text-align:center;
-}
-.acumulado{
-  background:#111;
-  color:#fff;
-  border-radius:15px;
-  padding:5px 15px;
-  font-size:18px;
-  font-weight:900;
-  display:inline-block;
-}
-.monto{
-  border:4px solid #c99b35;
-  background:#fff;
-  border-radius:12px;
-  padding:3px 30px;
-  font-size:44px;
-  font-weight:900;
-  margin:5px auto 10px;
-}
+.centro{grid-column:3;grid-row:1;text-align:center}
+.acumulado{display:inline-block;background:#111;color:#fff;border-radius:12px;padding:4px 20px;font-weight:900}
+.monto{border:4px solid #c99b35;background:#fff;border-radius:10px;font-size:42px;font-weight:900;padding:2px 25px;margin:3px auto 8px;max-width:230px}
+.carta-grande{width:100%;max-width:300px;margin:auto;background:#fff;border:5px solid #c99b35;border-radius:14px;padding:6px;box-shadow:0 4px 10px #777}
+.carta-grande img{width:100%;aspect-ratio:.72;object-fit:cover;display:block;border-radius:6px}
+.nombre{font-size:clamp(20px,2.5vw,30px);font-weight:900;margin:5px}
+.cantando{background:#111;color:#fff;border-radius:9px;padding:5px;font-weight:900;font-size:18px}
+#estado{min-height:22px;font-weight:900;margin:5px}
+.controles{display:flex;justify-content:center;gap:6px;flex-wrap:wrap}
+.controles button{border:0;border-radius:9px;padding:10px 13px;font-weight:900;cursor:pointer}
+#gritar{background:#ffee00}#auto{background:#0a2a4a;color:#fff}#nuevo{background:#7030a0;color:#fff}
 
-.carta-grande{
-  position:relative;
-  width:100%;
-  max-width:380px;
-  margin:auto;
-  border:6px solid #c99b35;
-  border-radius:15px;
-  padding:7px;
-  background:#fff;
-  box-shadow:0 4px 12px #777;
-}
-.carta-grande img{
-  display:block;
-  width:100%;
-  aspect-ratio:.72;
-  object-fit:cover;
-  border-radius:7px;
-}
-.carta-grande .numero-grande{
-  position:absolute;
-  top:13px;
-  left:15px;
-  background:#fff;
-  padding:3px 8px;
-  border-radius:5px;
-  font-weight:900;
-  font-size:18px;
-}
-.nombre-carta{
-  font-size:clamp(22px,3vw,34px);
-  font-weight:900;
-  margin:7px 0;
-}
-.cantando{
-  background:#111;
-  color:#fff;
-  border-radius:10px;
-  padding:6px;
-  font-size:18px;
-  font-weight:900;
-}
-#estado{
-  min-height:24px;
-  margin:6px 0;
-  font-weight:900;
-}
+.abajo{grid-column:2/5;grid-row:2;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.abajo .grupo{display:flex;gap:7px;justify-content:center}
+.abajo .cliente{width:58px;height:58px}
 
-.controles{
-  display:flex;
-  justify-content:center;
-  flex-wrap:wrap;
-  gap:8px;
-  margin:10px 0;
-}
-button{
-  border:0;
-  border-radius:10px;
-  padding:12px 18px;
-  font-size:16px;
-  font-weight:900;
-  cursor:pointer;
-}
-#btnGritar{background:#ffee00}
-#btnAuto{background:#0a2a4a;color:#fff}
-#btnNuevo{background:#c99b35;color:#fff}
-
-.fichas-titulo{
-  background:#111;
-  color:#fff;
-  display:inline-block;
-  border-radius:10px;
-  padding:5px 20px;
-  font-weight:900;
-  margin-top:8px;
-}
-.fichas{
-  margin-top:5px;
-  display:flex;
-  justify-content:center;
-  flex-wrap:wrap;
-  gap:7px;
-  padding:10px;
-  border:3px solid #c99b35;
-  border-radius:12px;
-  background:#fff;
-}
+.instruccion{text-align:center;margin-top:8px;font-weight:900;font-size:14px}
+.estado-linea{margin-top:4px;color:#555}
 
 @media(max-width:900px){
-  .juego{grid-template-columns:1fr}
-  .centro{order:-1}
-  .baraja{grid-template-columns:repeat(4,1fr)}
-  .carta-grande{max-width:300px}
+ .encabezado{grid-template-columns:55px 1fr 55px}
+ .encabezado .precio{grid-column:2}.encabezado .premios{grid-column:2;grid-row:2}.encabezado .cliente:first-child{grid-column:1;grid-row:1}.encabezado .cliente:last-child{grid-column:3;grid-row:1}
+ .tablero{grid-template-columns:42px 1fr 1fr 42px;grid-template-rows:auto auto auto}
+ .centro{grid-column:1/5;grid-row:1}.izq{grid-column:1;grid-row:2}.izqbar{grid-column:2;grid-row:2}.derbar{grid-column:3;grid-row:2}.der{grid-column:4;grid-row:2}
+ .abajo{grid-column:1/5;grid-row:3;flex-wrap:wrap}
+ .abajo .cliente{width:46px;height:46px;font-size:20px}
+ .carta-grande{max-width:260px}
 }
 </style>
 </head>
-
 <body>
-<div class="topbar">
-  <h1>🎴 LOTERÍA DON CLEMENTE 🎴</h1>
-  <small>32 CARTAS • 20 FICHAS</small>
-</div>
+<div class="topbar"><h1>🎴 LOTERÍA DON CLEMENTE 🎴</h1></div>
 
 <div class="contenedor">
-
-  <div class="premios">
-    <button class="ficha" id="fichaIzq">1</button>
+  <div class="encabezado">
+    <button class="cliente" id="cliente1" onclick="toggleCliente(1)">1</button>
     <div class="precio">$20</div>
-    <div class="premiosTexto">
-      1ra Línea: $100<br>
-      2da Línea: $100<br>
-      3ra Línea: $100
-    </div>
-    <button class="ficha" id="fichaDer">20</button>
+    <div class="premios">1ra Línea: 100<br>2da Línea: 100<br>3ra Línea: 100</div>
+    <button class="cliente" id="cliente20" onclick="toggleCliente(20)">20</button>
   </div>
 
-  <div class="juego">
+  <div class="tablero">
+    <div class="lateral izq" id="clientesIzq"></div>
 
-    <!-- CARTAS 1 A 16 -->
-    <div class="baraja" id="barajaIzq"></div>
+    <div class="baraja izqbar" id="barajaIzq"></div>
 
-    <!-- CARTA QUE SE VA CANTANDO -->
     <div class="centro">
       <div class="acumulado">ACUMULADO</div>
-      <div class="monto" id="acumulado">80</div>
-
+      <div class="monto">80</div>
       <div class="carta-grande">
-        <span class="numero-grande" id="numeroActual">1</span>
-        <img id="cartaActual" src="https://loteria.loteria-mexicana.mx/images/cartas/1.jpg" alt="Carta actual">
+        <img id="cartaActual" alt="Carta actual">
       </div>
-
-      <div class="cantando">
-        CANTANDO: <span id="nombreActual">EL GALLO</span>
-      </div>
-
-      <div id="estado">Listo para comenzar.</div>
-
+      <div class="nombre" id="nombreActual">LISTO</div>
+      <div class="cantando">CANTANDO: <span id="cantando">—</span></div>
+      <div id="estado">32 cartas disponibles.</div>
       <div class="controles">
-        <button id="btnGritar" onclick="gritarCarta()">🎤 GRITAR CARTA</button>
-        <button id="btnAuto" onclick="alternarAutomatico()">▶ AUTOMÁTICO</button>
-        <button id="btnNuevo" onclick="nuevoJuego()">🔄 NUEVO JUEGO</button>
+        <button id="gritar" onclick="gritarCarta()">🔊 GRITAR CARTA</button>
+        <button id="auto" onclick="automatico()">▶ AUTOMÁTICO</button>
+        <button id="nuevo" onclick="nuevoJuego()">🔄 NUEVO JUEGO</button>
       </div>
     </div>
 
-    <!-- CARTAS 17 A 32 -->
-    <div class="baraja" id="barajaDer"></div>
+    <div class="baraja derbar" id="barajaDer"></div>
 
+    <div class="lateral der" id="clientesDer"></div>
+
+    <div class="abajo">
+      <div class="grupo" id="clientesAbajoIzq"></div>
+      <div class="grupo" id="clientesAbajoDer"></div>
+    </div>
   </div>
 
-  <div style="text-align:center">
-    <div class="fichas-titulo">FICHAS</div>
+  <div class="instruccion">
+    Cada número representa un CLIENTE. Al completar las 4 cartas de su línea, el programa grita:
+    <b>“¡LOTERÍA! ¡GANÓ EL CLIENTE X!”</b>
+    <div class="estado-linea">Haz clic en el número del cliente para ocultar su ficha cuando su línea esté ocupada.</div>
   </div>
-  <div class="fichas" id="fichas"></div>
-
 </div>
 
 <script>
-const CARTAS = [
-  "EL GALLO","EL DIABLITO","LA DAMA","EL CATRÍN",
-  "EL PARAGUAS","LA SIRENA","LA ESCALERA","LA BOTELLA",
-  "EL BARRIL","EL ÁRBOL","EL MELÓN","EL VALIENTE",
-  "EL GORRITO","LA MUERTE","LA PERA","LA BANDERA",
-  "EL BANDOLÓN","EL VIOLONCELLO","LA GARZA","EL PÁJARO",
-  "LA MANO","LA BOTA","LA LUNA","EL COTORRO",
-  "EL BORRACHO","EL NEGRITO","EL CORAZÓN","LA ARAÑA",
-  "EL CAMARÓN","EL TAMBOR","LA SANDÍA","LAS JARAS"
+const NOMBRES=[
+"EL GALLO","EL DIABLITO","LA DAMA","EL CATRÍN",
+"EL PARAGUAS","LA SIRENA","LA ESCALERA","LA BOTELLA",
+"EL BARRIL","EL ÁRBOL","EL MELÓN","EL VALIENTE",
+"EL GORRITO","LA MUERTE","LA PERA","LA BANDERA",
+"EL BANDOLÓN","EL VIOLONCELLO","LA GARZA","EL PÁJARO",
+"LA MANO","LA BOTA","LA LUNA","EL COTORRO",
+"EL BORRACHO","EL NEGRITO","EL CORAZÓN","LA ARAÑA",
+"LA SANDÍA","EL TAMBOR","EL CAMARÓN","LAS JARAS"
 ];
 
-let cartasDisponibles = [];
-let cartasSalidas = new Set();
-let automatico = null;
-let fichasActivas = new Set();
+let disponibles=[], salidas=new Set(), clientesOcultos=new Set(), reloj=null;
 
 function urlCarta(n){
-  return `https://loteria.loteria-mexicana.mx/images/cartas/${n}.jpg`;
+  // Las cartas del repositorio están numeradas:
+  // /cartas/1.JPG, /cartas/2.JPG ... /cartas/32.JPG
+  return `cartas/${n}.JPG`;
+}
+
+function configurarImagen(img,n){
+  img.src = urlCarta(n);
+  img.alt = NOMBRES[n-1] || `Carta ${n}`;
+  img.onerror = ()=>{
+    img.alt = `No se encontró cartas/${n}.JPG`;
+  };
+}
+
+function ficha(n){
+ const b=document.createElement("button");
+ b.className="cliente"; b.id="cliente"+n; b.textContent=n;
+ b.title="Cliente "+n;
+ b.onclick=()=>toggleCliente(n);
+ return b;
+}
+
+function crearClientes(){
+ const izq=document.getElementById("clientesIzq"), der=document.getElementById("clientesDer");
+ const ai=document.getElementById("clientesAbajoIzq"), ad=document.getElementById("clientesAbajoDer");
+ izq.innerHTML="";der.innerHTML="";ai.innerHTML="";ad.innerHTML="";
+ // EXACTAMENTE como la imagen:
+ // izquierda 1-6
+ for(let n=1;n<=6;n++) izq.appendChild(ficha(n));
+ // derecha 20-15
+ for(let n=20;n>=15;n--) der.appendChild(ficha(n));
+ // abajo izquierda 7-10
+ for(let n=7;n<=10;n++) ai.appendChild(ficha(n));
+ // abajo derecha 11-14
+ for(let n=11;n<=14;n++) ad.appendChild(ficha(n));
 }
 
 function crearBaraja(){
-  const izq = document.getElementById("barajaIzq");
-  const der = document.getElementById("barajaDer");
-  izq.innerHTML = "";
-  der.innerHTML = "";
-
-  for(let n=1;n<=32;n++){
-    const div = document.createElement("div");
-    div.className = "carta-mini";
-    div.id = "cartaMini" + n;
-    div.innerHTML = `
-      <span class="numero">${n}</span>
-      <img src="${urlCarta(n)}" alt="${CARTAS[n-1]}">
-      <div class="tapada">SALIDA</div>
-    `;
-
-    if(n<=16) izq.appendChild(div);
-    else der.appendChild(div);
-  }
+ const a=document.getElementById("barajaIzq"),b=document.getElementById("barajaDer");
+ a.innerHTML="";b.innerHTML="";
+ for(let n=1;n<=32;n++){
+  const c=document.createElement("div");
+  c.className="carta-mini";c.id="mini"+n;
+  c.innerHTML=`<span class="numero">${n}</span><img id="imgMini${n}" alt="${NOMBRES[n-1]}"><div class="tapada">SALIDA</div>`;
+  configurarImagen(document.getElementById("imgMini"+n),n);
+  (n<=16?a:b).appendChild(c);
+ }
 }
 
-function crearFichas(){
-  const cont = document.getElementById("fichas");
-  cont.innerHTML = "";
-
-  for(let n=1;n<=20;n++){
-    const b = document.createElement("button");
-    b.className = "ficha";
-    b.textContent = n;
-    b.onclick = () => toggleFicha(n);
-    b.id = "ficha" + n;
-    cont.appendChild(b);
-  }
+function toggleCliente(n){
+ const el=document.getElementById("cliente"+n);
+ if(!el)return;
+ if(clientesOcultos.has(n)){
+  clientesOcultos.delete(n); el.classList.remove("oculto");
+ }else{
+  clientesOcultos.add(n); el.classList.add("oculto");
+ }
 }
 
-function toggleFicha(n){
-  const b = document.getElementById("ficha"+n);
-
-  if(fichasActivas.has(n)){
-    fichasActivas.delete(n);
-    b.classList.remove("activa");
-  }else{
-    fichasActivas.add(n);
-    b.classList.add("activa");
-  }
-}
-
-function prepararBaraja(){
-  cartasDisponibles = Array.from({length:32},(_,i)=>i+1);
-  cartasSalidas.clear();
-
-  for(let n=1;n<=32;n++){
-    document.getElementById("cartaMini"+n).classList.remove("salio");
-  }
-
-  document.getElementById("estado").textContent = "32 cartas disponibles.";
+function preparar(){
+ disponibles=Array.from({length:32},(_,i)=>i+1);
+ salidas.clear();
+ for(let n=1;n<=32;n++)document.getElementById("mini"+n).classList.remove("salio");
+ configurarImagen(document.getElementById("cartaActual"),1);
+ document.getElementById("nombreActual").textContent="LISTO";
+ document.getElementById("cantando").textContent="—";
+ document.getElementById("estado").textContent="32 cartas disponibles.";
 }
 
 function gritarCarta(){
-  if(cartasDisponibles.length===0){
-    detenerAutomatico();
-    document.getElementById("estado").textContent = "🎉 ¡YA SALIERON LAS 32 CARTAS!";
-    return;
-  }
+ if(!disponibles.length){
+  parar();
+  document.getElementById("estado").textContent="🎉 ¡YA SALIERON LAS 32 CARTAS!";
+  return;
+ }
+ const i=Math.floor(Math.random()*disponibles.length);
+ const n=disponibles.splice(i,1)[0];
+ salidas.add(n);
 
-  // Elegir una carta al azar de las que todavía no han salido
-  const posicion = Math.floor(Math.random()*cartasDisponibles.length);
-  const numero = cartasDisponibles.splice(posicion,1)[0];
+ configurarImagen(document.getElementById("cartaActual"),n);
+ document.getElementById("cartaActual").alt=NOMBRES[n-1];
+ document.getElementById("nombreActual").textContent=NOMBRES[n-1];
+ document.getElementById("cantando").textContent=NOMBRES[n-1];
+ document.getElementById("mini"+n).classList.add("salio");
+ document.getElementById("estado").textContent=`Carta ${n} • ${NOMBRES[n-1]} • ${disponibles.length} restantes`;
 
-  cartasSalidas.add(numero);
-
-  document.getElementById("cartaActual").src = urlCarta(numero);
-  document.getElementById("cartaActual").alt = CARTAS[numero-1];
-  document.getElementById("numeroActual").textContent = numero;
-  document.getElementById("nombreActual").textContent = CARTAS[numero-1];
-
-  // Tapar automáticamente la carta que acaba de salir
-  document.getElementById("cartaMini"+numero).classList.add("salio");
-
-  document.getElementById("estado").textContent =
-    `Carta ${numero}: ${CARTAS[numero-1]} — quedan ${cartasDisponibles.length}`;
-
-  // Voz
-  if("speechSynthesis" in window){
-    speechSynthesis.cancel();
-    const voz = new SpeechSynthesisUtterance(CARTAS[numero-1]);
-    voz.lang = "es-MX";
-    voz.rate = .85;
-    voz.pitch = 1;
-    speechSynthesis.speak(voz);
-  }
+ if("speechSynthesis" in window){
+  speechSynthesis.cancel();
+  const voz=new SpeechSynthesisUtterance(NOMBRES[n-1]);
+  voz.lang="es-MX";voz.rate=.82;voz.pitch=1;
+  speechSynthesis.speak(voz);
+ }
 }
 
-function alternarAutomatico(){
-  if(automatico){
-    detenerAutomatico();
-  }else{
-    document.getElementById("btnAuto").textContent = "⏸ DETENER";
-    gritarCarta();
-    automatico = setInterval(gritarCarta, 4000);
+/*
+  AQUÍ SE DEFINEN LAS 20 LÍNEAS DE CLIENTE.
+  Cada cliente debe tener EXACTAMENTE 4 CARTAS.
+  Cambia los números de cada arreglo para que correspondan
+  a las 4 cartas que pertenecen a ese cliente.
+
+  Ejemplo:
+  cliente 2 = cartas 5,6,7,8
+*/
+const LINEAS_CLIENTES={
+  1:[1,2,3,4],
+  2:[5,6,7,8],
+  3:[9,10,11,12],
+  4:[13,14,15,16],
+  5:[17,18,19,20],
+  6:[21,22,23,24],
+  7:[25,26,27,28],
+  8:[29,30,31,32],
+  9:[1,6,11,16],
+  10:[17,22,27,32],
+  11:[4,9,14,19],
+  12:[13,18,23,28],
+  13:[5,10,15,20],
+  14:[8,13,18,23],
+  15:[2,7,12,17],
+  16:[16,21,26,31],
+  17:[3,8,13,18],
+  18:[15,20,25,30],
+  19:[4,14,24,34],
+  20:[1,11,21,31]
+};
+
+let ganadores=new Set();
+
+function comprobarGanadores(){
+ for(let cliente=1;cliente<=20;cliente++){
+  if(ganadores.has(cliente))continue;
+  const linea=LINEAS_CLIENTES[cliente] || [];
+  if(linea.length!==4)continue;
+  if(linea.every(c=>salidas.has(c))){
+   ganadores.add(cliente);
+   gritarLoteria(cliente);
   }
+ }
 }
 
-function detenerAutomatico(){
-  if(automatico){
-    clearInterval(automatico);
-    automatico = null;
-  }
-  document.getElementById("btnAuto").textContent = "▶ AUTOMÁTICO";
+function gritarLoteria(cliente){
+ const texto=`¡Lotería! ¡Ganó el cliente ${cliente}!`;
+ document.getElementById("estado").textContent="🎉 "+texto;
+
+ if("speechSynthesis" in window){
+  speechSynthesis.cancel();
+  const voz=new SpeechSynthesisUtterance(texto);
+  voz.lang="es-MX";voz.rate=.78;voz.pitch=1.1;
+  speechSynthesis.speak(voz);
+ }
+ setTimeout(()=>alert("🎉 ¡LOTERÍA! 🎉\n\n¡Ganó el cliente "+cliente+"!"),150);
+}
+
+function automatico(){
+ if(reloj){parar();return}
+ document.getElementById("auto").textContent="⏸ DETENER";
+ gritarCarta();
+ reloj=setInterval(gritarCarta,4000);
+}
+
+function parar(){
+ if(reloj){clearInterval(reloj);reloj=null}
+ document.getElementById("auto").textContent="▶ AUTOMÁTICO";
 }
 
 function nuevoJuego(){
-  detenerAutomatico();
-  fichasActivas.clear();
-
-  for(let n=1;n<=20;n++){
-    const b=document.getElementById("ficha"+n);
-    if(b) b.classList.remove("activa");
-  }
-
-  prepararBaraja();
-
-  document.getElementById("cartaActual").src = urlCarta(1);
-  document.getElementById("numeroActual").textContent = "—";
-  document.getElementById("nombreActual").textContent = "LISTO";
+ parar();
+ ganadores.clear();
+ // Las fichas de cliente vuelven a aparecer.
+ clientesOcultos.clear();
+ for(let n=1;n<=20;n++){
+  const e=document.getElementById("cliente"+n);
+  if(e)e.classList.remove("oculto");
+ }
+ preparar();
 }
 
 window.addEventListener("DOMContentLoaded",()=>{
-  crearBaraja();
-  crearFichas();
-  nuevoJuego();
+ crearClientes();
+ crearBaraja();
+ nuevoJuego();
 });
 </script>
 </body>
