@@ -10,9 +10,9 @@ body{margin:0;background:#f5f2ea;color:#111}
 .topbar{background:#0a2a4a;color:#fff;text-align:center;padding:8px;border-bottom:4px solid #ffee00}
 .topbar h1{margin:0;font-size:clamp(20px,3vw,34px)}
 .contenedor{max-width:1500px;margin:auto;padding:10px;transform:translateY(-12px)}
-.encabezado{display:grid;grid-template-columns:70px 1fr 1fr 70px;align-items:center;gap:10px;margin-bottom:8px}
-.precio{font-size:clamp(38px,5vw,70px);font-weight:900;text-align:center}
-.premios{text-align:center;font-size:clamp(16px,2vw,27px);font-weight:900;line-height:1.1}
+.encabezado{display:grid;grid-template-columns:62px minmax(240px,1fr) minmax(280px,410px) minmax(240px,1fr) 62px;align-items:center;gap:6px 8px;margin-bottom:8px}
+.precio{grid-column:2;font-size:clamp(38px,5vw,70px);font-weight:900;text-align:center}
+.premios{grid-column:4;text-align:center;font-size:clamp(16px,2vw,27px);font-weight:900;line-height:1.1}
 .cliente{width:62px;height:62px;border-radius:50%;border:3px solid #fff;background:#c99b35;color:#fff;font-weight:900;font-size:27px;box-shadow:0 3px 7px #777;cursor:pointer;transition:.2s}
 .cliente:hover{transform:scale(1.05)}
 .cliente.oculto{visibility:hidden;opacity:0;transform:scale(.3);pointer-events:none}
