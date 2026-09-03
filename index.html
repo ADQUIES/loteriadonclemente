@@ -3,22 +3,25 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Loteria 70% reducida</title>
+<title>Loteria Final</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;font-family:Arial}
 body{background:#f5f2ea;width:100vw;height:100dvh;overflow:hidden;display:flex;flex-direction:column}
-.topbar{background:#0a2a4a;color:#fff;text-align:center;font-size:9px;height:13px;line-height:13px}
+.topbar{background:#0a2a4a;color:#fff;text-align:center;font-size:9px;height:13px;line-height:13px;border-bottom:1px solid #ffee00}
 .encabezado{display:flex;justify-content:space-between;font-weight:900;font-size:9px;padding:0 4px;height:10px}
-.tablero{flex:1;display:grid;grid-template-columns:20px 1fr 90px 1fr 20px;gap:1px;padding:1px}
-.baraja{border:1px solid #c99b35;background:#fff;display:grid;grid-template-columns:repeat(4,1fr);gap:1px;padding:1px;transform:scale(0.3);transform-origin:top left;width:333%;height:333%}
-.carta{aspect-ratio:.72;background:#ddd;position:relative;overflow:hidden}
+.tablero{flex:1;display:grid;grid-template-columns:20px 1fr 90px 1fr 20px;gap:1px;padding:1px;overflow:hidden}
+/* CARTAS TABLERO 80% MAS CHICAS = 20% TAMAÑO */
+.baraja{border:1px solid #c99b35;background:#fff;display:grid;grid-template-columns:repeat(4,1fr);gap:2px;padding:2px;transform:scale(0.20);transform-origin:top left;width:500%;height:500%}
+.carta{aspect-ratio:.72;background:#ddd;position:relative;overflow:hidden;border:1px solid #fff}
 .carta img{position:absolute;inset:0;width:100%;height:100%;object-fit:fill}
+.carta.salio::after{content:'';position:absolute;inset:0;background:rgba(0,0,0,.6)}
 .cliente{width:16px;height:16px;border-radius:50%;background:#c99b35;color:#fff;border:1px solid #fff;font-size:8px;display:flex;align-items:center;justify-content:center;margin:1px auto}
 .centro{display:flex;flex-direction:column;align-items:center;gap:2px}
 .monto{border:1px solid #c99b35;background:#fff;font-weight:900;font-size:14px;border-radius:2px;width:100%;text-align:center}
 .carta-grande{width:70px;height:86px;background:#fff;border:1px solid #c99b35;border-radius:3px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900}
 .carta-grande img{position:absolute;inset:0;width:100%;height:100%;object-fit:fill}
-button{font-size:7px;padding:2px 4px;border:0;border-radius:2px;font-weight:900}
+#nombre,#estado{font-size:8px;font-weight:900;text-align:center}
+button{font-size:7px;padding:3px 5px;border:0;border-radius:3px;font-weight:900;cursor:pointer}
 #gritar{background:#ffee00}#auto{background:#0a2a4a;color:#fff}#nuevo{background:#7030a0;color:#fff}
 </style>
 </head>
@@ -32,19 +35,58 @@ button{font-size:7px;padding:2px 4px;border:0;border-radius:2px;font-weight:900}
 <div style="background:#111;color:#fff;border-radius:2px;font-size:6px;width:100%;text-align:center">ACUMULADO</div>
 <div class="monto">80</div>
 <div class="carta-grande" id="cG"><span id="cGtxt">1</span><img id="cGimg"></div>
-<div style="font-size:7px;font-weight:900" id="nombre">LISTO</div>
-<div style="display:flex;gap:1px"><button onclick="gritar()">GRITAR</button><button onclick="auto()">AUTO</button></div>
+<div id="nombre">LISTO</div>
+<div id="estado">54 disp.</div>
+<div style="display:flex;gap:2px">
+<button id="gritar" onclick="gritar()">GRITAR</button>
+<button id="auto" onclick="auto()">AUTO</button>
+<button id="nuevo" onclick="nuevo()">NUEVO</button>
+</div>
 </div>
 <div class="baraja" id="bDer"></div>
 <div id="cDer"></div>
 </div>
 <script>
 const N=["EL GALLO","EL DIABLITO","LA DAMA","EL CATRIN","EL PARAGUAS","LA SIRENA","LA ESCALERA","LA BOTELLA","EL BARRIL","EL ARBOL","EL MELON","EL VALIENTE","EL GORRITO","LA MUERTE","LA PERA","LA BANDERA","EL BANDOLON","EL VIOLONCELLO","LA GARZA","EL PAJARO","LA MANO","LA BOTA","LA LUNA","EL COTORRO","EL BORRACHO","EL NEGRITO","EL CORAZON","LA SANDIA","EL TAMBOR","EL CAMARON","LAS JARAS","EL MUSICO","LA ARAÑA","EL SOLDADO","LA ESTRELLA","EL CAZO","EL MUNDO","EL APACHE","EL NOPAL","EL ALACRAN","LA ROSA","LA CALAVERA","LA CAMPANA","EL CANTARITO","EL VENADO","EL SOL","LA CORONA","LA CHALUPA","EL PINO","EL PESCADO","LA PALMA","LA MACETA","EL ARPA","LA RANA"];
-let disp=[...Array(54).keys()].map(i=>i+1),timer=null;
-function ficha(n){let d=document.createElement("div");d.className="cliente";d.textContent=n;return d}
-function init(){let iz=document.getElementById("cIzq"),de=document.getElementById("cDer"),a=document.getElementById("bIzq"),b=document.getElementById("bDer");for(let i=1;i<=10;i++)iz.appendChild(ficha(i));for(let i=11;i<=20;i++)de.appendChild(ficha(i));for(let i=1;i<=32;i++){let c=document.createElement("div");c.className="carta";c.innerHTML=`<img src="CARTAS/${i}.jpg">`;if(i<=16)a.appendChild(c);else b.appendChild(c)}}
-function gritar(){let n=disp.splice(Math.floor(Math.random()*disp.length),1)[0];document.getElementById("cGtxt").textContent=n;document.getElementById("cGimg").src=`CARTAS/${n}.jpg`;document.getElementById("nombre").textContent=N[n-1]}
-function auto(){if(timer){clearInterval(timer);timer=null;return}timer=setInterval(gritar,2000)}
+let disp=[],sal=new Set(),timer=null,gan=new Set();
+
+function hablar(texto){
+ if('speechSynthesis' in window){
+   speechSynthesis.cancel();
+   let u=new SpeechSynthesisUtterance(texto);
+   u.lang='es-MX'; u.rate=0.85;
+   speechSynthesis.speak(u);
+ }
+}
+function ficha(n){let d=document.createElement("div");d.className="cliente";d.id="cl"+n;d.textContent=n;return d}
+function init(){
+ let iz=document.getElementById("cIzq"),de=document.getElementById("cDer"),a=document.getElementById("bIzq"),b=document.getElementById("bDer");
+ iz.innerHTML="";de.innerHTML="";a.innerHTML="";b.innerHTML="";
+ for(let i=1;i<=10;i++)iz.appendChild(ficha(i));
+ for(let i=11;i<=20;i++)de.appendChild(ficha(i));
+ for(let i=1;i<=32;i++){let c=document.createElement("div");c.className="carta";c.id="m"+i;c.innerHTML=`<img src="CARTAS/${i}.jpg" onerror="this.src='CARTAS/${i}.JPG'">`;if(i<=16)a.appendChild(c);else b.appendChild(c)}
+ prep();
+}
+function prep(){disp=[...Array(54).keys()].map(i=>i+1);sal.clear();gan.clear();document.querySelectorAll(".carta").forEach(e=>e.classList.remove("salio"));document.getElementById("estado").textContent="54 disp.";document.getElementById("nombre").textContent="LISTO"}
+function gritar(){
+ if(!disp.length){alert("Se acabaron");return}
+ let k=Math.floor(Math.random()*disp.length);let n=disp.splice(k,1)[0];sal.add(n);
+ document.getElementById("cGtxt").textContent=n;
+ let img=document.getElementById("cGimg");img.src=`CARTAS/${n}.jpg`;
+ document.getElementById("nombre").textContent=N[n-1];
+ document.getElementById("estado").textContent=n+"-"+N[n-1];
+ let mm=document.getElementById("m"+n);if(mm)mm.classList.add("salio");
+ hablar(N[n-1]); // HABLA LA CARTA
+}
+function auto(){
+ if(timer){clearInterval(timer);timer=null;document.getElementById("auto").textContent="AUTO";return}
+ document.getElementById("auto").textContent="PARAR";
+ gritar();timer=setInterval(gritar,3000);
+}
+function nuevo(){
+ if(timer){clearInterval(timer);timer=null;document.getElementById("auto").textContent="AUTO"}
+ prep();
+}
 init();
 </script>
 </body>
