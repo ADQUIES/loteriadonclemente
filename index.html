@@ -3,24 +3,21 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Loteria ULTRA RECORTADA</title>
+<title>Loteria 70% reducida</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;font-family:Arial}
 body{background:#f5f2ea;width:100vw;height:100dvh;overflow:hidden;display:flex;flex-direction:column}
-.topbar{background:#0a2a4a;color:#fff;text-align:center;font-size:9px;padding:0;border-bottom:1px solid #ffee00;height:13px;line-height:13px}
-.encabezado{display:flex;justify-content:space-between;font-weight:900;font-size:9px;padding:0 3px;height:10px;line-height:10px}
-.tablero{flex:1;display:grid;grid-template-columns:20px 1fr 90px 1fr 20px;gap:1px;padding:1px;min-height:0;align-items:stretch}
-.baraja{border:1px solid #c99b35;background:#fff;display:grid;grid-template-columns:repeat(4,1fr);gap:1px;padding:1px;border-radius:2px;align-content:start}
-.carta{position:relative;width:100%;aspect-ratio:.75;background:#ddd;overflow:hidden}
+.topbar{background:#0a2a4a;color:#fff;text-align:center;font-size:9px;height:13px;line-height:13px}
+.encabezado{display:flex;justify-content:space-between;font-weight:900;font-size:9px;padding:0 4px;height:10px}
+.tablero{flex:1;display:grid;grid-template-columns:20px 1fr 90px 1fr 20px;gap:1px;padding:1px}
+.baraja{border:1px solid #c99b35;background:#fff;display:grid;grid-template-columns:repeat(4,1fr);gap:1px;padding:1px;transform:scale(0.3);transform-origin:top left;width:333%;height:333%}
+.carta{aspect-ratio:.72;background:#ddd;position:relative;overflow:hidden}
 .carta img{position:absolute;inset:0;width:100%;height:100%;object-fit:fill}
-.carta.salio::after{content:'';position:absolute;inset:0;background:rgba(0,0,0,.45)}
-.cliente{width:16px;height:16px;border-radius:50%;background:#c99b35;color:#fff;border:1px solid #fff;font-weight:900;font-size:8px;display:flex;align-items:center;justify-content:center;margin:1px auto}
-.centro{display:flex;flex-direction:column;align-items:center;gap:1px;min-height:0;justify-content:flex-start}
-.monto{border:1px solid #c99b35;background:#fff;font-weight:900;font-size:12px;border-radius:2px;padding:0 4px;width:100%;text-align:center;line-height:1.1}
-.carta-grande{width:70px;height:86px;background:#fff;border:1px solid #c99b35;border-radius:3px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900;flex:0 0 86px}
+.cliente{width:16px;height:16px;border-radius:50%;background:#c99b35;color:#fff;border:1px solid #fff;font-size:8px;display:flex;align-items:center;justify-content:center;margin:1px auto}
+.centro{display:flex;flex-direction:column;align-items:center;gap:2px}
+.monto{border:1px solid #c99b35;background:#fff;font-weight:900;font-size:14px;border-radius:2px;width:100%;text-align:center}
+.carta-grande{width:70px;height:86px;background:#fff;border:1px solid #c99b35;border-radius:3px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900}
 .carta-grande img{position:absolute;inset:0;width:100%;height:100%;object-fit:fill}
-#nombre{font-size:7px;font-weight:900;text-align:center;line-height:1;max-width:90px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-#estado{font-size:7px;font-weight:900;text-align:center;line-height:1}
 button{font-size:7px;padding:2px 4px;border:0;border-radius:2px;font-weight:900}
 #gritar{background:#ffee00}#auto{background:#0a2a4a;color:#fff}#nuevo{background:#7030a0;color:#fff}
 </style>
@@ -32,27 +29,23 @@ button{font-size:7px;padding:2px 4px;border:0;border-radius:2px;font-weight:900}
 <div id="cIzq"></div>
 <div class="baraja" id="bIzq"></div>
 <div class="centro">
-<div style="background:#111;color:#fff;border-radius:2px;font-size:6px;padding:0 3px;width:100%;text-align:center">ACUMULADO</div>
+<div style="background:#111;color:#fff;border-radius:2px;font-size:6px;width:100%;text-align:center">ACUMULADO</div>
 <div class="monto">80</div>
 <div class="carta-grande" id="cG"><span id="cGtxt">1</span><img id="cGimg"></div>
-<div id="nombre">LISTO</div>
-<div id="estado">54 disp.</div>
-<div style="display:flex;gap:1px"><button onclick="gritar()">GRITAR</button><button onclick="auto()">AUTO</button><button onclick="nuevo()">NUEVO</button></div>
+<div style="font-size:7px;font-weight:900" id="nombre">LISTO</div>
+<div style="display:flex;gap:1px"><button onclick="gritar()">GRITAR</button><button onclick="auto()">AUTO</button></div>
 </div>
 <div class="baraja" id="bDer"></div>
 <div id="cDer"></div>
 </div>
 <script>
 const N=["EL GALLO","EL DIABLITO","LA DAMA","EL CATRIN","EL PARAGUAS","LA SIRENA","LA ESCALERA","LA BOTELLA","EL BARRIL","EL ARBOL","EL MELON","EL VALIENTE","EL GORRITO","LA MUERTE","LA PERA","LA BANDERA","EL BANDOLON","EL VIOLONCELLO","LA GARZA","EL PAJARO","LA MANO","LA BOTA","LA LUNA","EL COTORRO","EL BORRACHO","EL NEGRITO","EL CORAZON","LA SANDIA","EL TAMBOR","EL CAMARON","LAS JARAS","EL MUSICO","LA ARAÑA","EL SOLDADO","LA ESTRELLA","EL CAZO","EL MUNDO","EL APACHE","EL NOPAL","EL ALACRAN","LA ROSA","LA CALAVERA","LA CAMPANA","EL CANTARITO","EL VENADO","EL SOL","LA CORONA","LA CHALUPA","EL PINO","EL PESCADO","LA PALMA","LA MACETA","EL ARPA","LA RANA"];
-let disp=[],sal=new Set(),timer=null;
-function ficha(n){let d=document.createElement("div");d.className="cliente";d.id="cl"+n;d.textContent=n;return d}
-function initC(){let iz=document.getElementById("cIzq"),de=document.getElementById("cDer");iz.innerHTML="";de.innerHTML="";for(let i=1;i<=10;i++)iz.appendChild(ficha(i));for(let i=11;i<=20;i++)de.appendChild(ficha(i))}
-function initB(){let a=document.getElementById("bIzq"),b=document.getElementById("bDer");a.innerHTML="";b.innerHTML="";for(let i=1;i<=32;i++){let c=document.createElement("div");c.className="carta";c.id="m"+i;c.innerHTML=`<img src="CARTAS/${i}.jpg">`;if(i<=16)a.appendChild(c);else b.appendChild(c)}}
-function prep(){disp=[...Array(54).keys()].map(i=>i+1);sal.clear();document.querySelectorAll(".carta").forEach(e=>e.classList.remove("salio"))}
-function gritar(){if(!disp.length)return;let k=Math.floor(Math.random()*disp.length);let n=disp.splice(k,1)[0];sal.add(n);document.getElementById("cGtxt").textContent=n;let img=document.getElementById("cGimg");img.src=`CARTAS/${n}.jpg`;document.getElementById("nombre").textContent=N[n-1];document.getElementById("estado").textContent=n+"-"+N[n-1];let mm=document.getElementById("m"+n);if(mm)mm.classList.add("salio")}
-function auto(){if(timer){clearInterval(timer);timer=null;return}gritar();timer=setInterval(gritar,2000)}
-function nuevo(){if(timer){clearInterval(timer);timer=null}prep()}
-initC();initB();prep();
+let disp=[...Array(54).keys()].map(i=>i+1),timer=null;
+function ficha(n){let d=document.createElement("div");d.className="cliente";d.textContent=n;return d}
+function init(){let iz=document.getElementById("cIzq"),de=document.getElementById("cDer"),a=document.getElementById("bIzq"),b=document.getElementById("bDer");for(let i=1;i<=10;i++)iz.appendChild(ficha(i));for(let i=11;i<=20;i++)de.appendChild(ficha(i));for(let i=1;i<=32;i++){let c=document.createElement("div");c.className="carta";c.innerHTML=`<img src="CARTAS/${i}.jpg">`;if(i<=16)a.appendChild(c);else b.appendChild(c)}}
+function gritar(){let n=disp.splice(Math.floor(Math.random()*disp.length),1)[0];document.getElementById("cGtxt").textContent=n;document.getElementById("cGimg").src=`CARTAS/${n}.jpg`;document.getElementById("nombre").textContent=N[n-1]}
+function auto(){if(timer){clearInterval(timer);timer=null;return}timer=setInterval(gritar,2000)}
+init();
 </script>
 </body>
 </html>
